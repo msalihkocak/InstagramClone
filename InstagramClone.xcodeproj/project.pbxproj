@@ -11,6 +11,7 @@
 		49882A8821A5780F009457D4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 49882A8721A5780F009457D4 /* Assets.xcassets */; };
 		49882A8B21A5780F009457D4 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 49882A8921A5780F009457D4 /* LaunchScreen.storyboard */; };
 		49882A9521A578BA009457D4 /* RegisterController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49882A9421A578BA009457D4 /* RegisterController.swift */; };
+		49882A9921A5F001009457D4 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49882A9821A5F001009457D4 /* Extensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -20,6 +21,7 @@
 		49882A8A21A5780F009457D4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		49882A8C21A5780F009457D4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		49882A9421A578BA009457D4 /* RegisterController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterController.swift; sourceTree = "<group>"; };
+		49882A9821A5F001009457D4 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,6 +54,7 @@
 		49882A7F21A5780E009457D4 /* InstagramClone */ = {
 			isa = PBXGroup;
 			children = (
+				49882A9621A5EFEB009457D4 /* Utility */,
 				49882A9321A57896009457D4 /* Controllers */,
 				49882A9221A5785B009457D4 /* Resources */,
 			);
@@ -75,6 +78,14 @@
 				49882A9421A578BA009457D4 /* RegisterController.swift */,
 			);
 			path = Controllers;
+			sourceTree = "<group>";
+		};
+		49882A9621A5EFEB009457D4 /* Utility */ = {
+			isa = PBXGroup;
+			children = (
+				49882A9821A5F001009457D4 /* Extensions.swift */,
+			);
+			path = Utility;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -148,6 +159,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				49882A9521A578BA009457D4 /* RegisterController.swift in Sources */,
+				49882A9921A5F001009457D4 /* Extensions.swift in Sources */,
 				49882A8121A5780E009457D4 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
