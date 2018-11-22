@@ -2,11 +2,12 @@
 //  AppDelegate.swift
 //  InstagramClone
 //
-//  Created by BTK Apple on 21.11.2018.
+//  Created by Mehmet Salih Koçak on 21.11.2018.
 //  Copyright © 2018 msalihkocak. All rights reserved.
 //
 
 import UIKit
+import Firebase
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -16,11 +17,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
+        FirebaseApp.configure()
+        
         window = UIWindow()
         window?.makeKeyAndVisible()
         
-//        let navController = UINavigationController(rootViewController: )
-        window?.rootViewController = RegisterController()
+        let tabbarController = MainTabBarContorller()
+        window?.rootViewController = tabbarController
         
         return true
     }
