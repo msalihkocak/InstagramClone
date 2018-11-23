@@ -61,16 +61,30 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
         return button
     }()
     
+    let goToLoginButton: UIButton = {
+        let button = UIButton(type: .system)
+        let mutableAttrString = NSMutableAttributedString(string: "Already have an account? ", attributes: TextAttributes.descAttributes)
+        mutableAttrString.append(NSAttributedString(string: "Sign in.", attributes: TextAttributes.signupButtonAttributes))
+        button.setAttributedTitle(mutableAttrString, for: .normal)
+        button.setTitleColor(.blue, for: .normal)
+        button.addTarget(self, action: #selector(handleGoToLogin), for: .touchUpInside)
+        return button
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         view.backgroundColor = .white
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard)))
+        navigationController?.setNavigationBarHidden(true, animated: false)
         
         view.addSubview(plusPhotoButton)
         
-        plusPhotoButton.anchor(top: view.topAnchor, tConst: 40, lead: nil, lConst: 0, trail: nil, trConst: 0, bot: nil, bConst: 0, height: 140, width: 140)
+        plusPhotoButton.anchor(top: view.topAnchor, left: nil, bottom: nil, right: nil, paddingTop: 40, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 140, height: 140)
         plusPhotoButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        
+        view.addSubview(goToLoginButton)
+        goToLoginButton.anchor(top: nil, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 50)
         
         setupInputAreaView()
         handleTextChange()
@@ -84,7 +98,7 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
         
         view.addSubview(inputAreaView)
         
-        inputAreaView.anchor(top: plusPhotoButton.bottomAnchor, tConst: 20, lead: view.leadingAnchor, lConst: 40, trail: view.trailingAnchor, trConst: 40, bot: nil, bConst: 0, height: 200, width: nil)
+        inputAreaView.anchor(top: plusPhotoButton.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 20, paddingLeft: 40, paddingBottom: 0, paddingRight: 40, width: 0, height: 200)
     }
     
     @objc func handleSignUp(){
@@ -122,11 +136,22 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
                             return
                         }
                         print("User succcessfully registered to database", ref)
+                        self.dismiss(animated: true, completion: nil)
                     })
 
                 })
             })
         }
+    }
+    
+    @objc func handleTextChange(){
+        Utility.validate([emailTextField, usernameTextField, passwordTextField], andExecute: { (isFormValid) in
+            Utility.animateButton(button: self.signupButton, withFlag: isFormValid)
+        })
+    }
+    
+    @objc func handleGoToLogin(){
+        navigationController?.popViewController(animated: true)
     }
     
     @objc func handleImageSelection(){
@@ -150,31 +175,6 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
         plusPhotoButton.layer.borderWidth = 2
         
         dismiss(animated: true, completion: nil)
-    }
-    
-    @objc func handleTextChange(){
-        guard let userText =  usernameTextField.text else { return }
-        guard let emailText =  emailTextField.text else { return }
-        guard let passwordText =  passwordTextField.text else { return }
-        if userText.count > 0 && emailText.count > 0 && passwordText.count > 0 {
-            animateEnable(of: signupButton) {
-                self.signupButton.backgroundColor = UIColor.blue.withAlphaComponent(0.5)
-                self.signupButton.isEnabled = true
-            }
-            return
-        }
-        animateEnable(of: signupButton) {
-            self.signupButton.backgroundColor = .registerButton
-            self.signupButton.isEnabled = false
-        }
-    }
-    
-    func animateEnable(of button: UIButton, with block:(() -> Void)?){
-        UIView.transition(with: button,
-                          duration: 0.5,
-                          options: .transitionCrossDissolve,
-                          animations: block,
-                          completion: nil)
     }
     
     @objc fileprivate func dismissKeyboard(){

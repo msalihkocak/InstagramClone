@@ -14,30 +14,45 @@ extension UIColor{
     }
     
     static let registerButton = UIColor.rgb(149, 204, 244)
+    static let seperator = UIColor.rgb(235, 235, 235)
+    static let mainBlue = UIColor.rgb(0, 122, 175)
+    static let buttonBlue = UIColor.rgb(17, 154, 237)
 }
 
-extension UIView{
+struct TextAttributes {
+    static let titleAttributes = [NSAttributedString.Key.font:UIFont.boldSystemFont(ofSize: 14)]
+    static let descAttributes = [NSAttributedString.Key.foregroundColor:UIColor.lightGray, NSAttributedString.Key.font : UIFont.systemFont(ofSize: 14)]
+    static let signupButtonAttributes = [NSAttributedString.Key.foregroundColor: UIColor.buttonBlue, NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 14)]
+}
+
+extension UIView {
     
-    func anchor(top:NSLayoutYAxisAnchor?, tConst: CGFloat, lead:NSLayoutXAxisAnchor?, lConst: CGFloat, trail:NSLayoutXAxisAnchor?, trConst: CGFloat, bot:NSLayoutYAxisAnchor?, bConst: CGFloat, height:CGFloat?, width:CGFloat?){
-        self.translatesAutoresizingMaskIntoConstraints = false
+    func anchor(top: NSLayoutYAxisAnchor?, left: NSLayoutXAxisAnchor?, bottom: NSLayoutYAxisAnchor?, right: NSLayoutXAxisAnchor?,  paddingTop: CGFloat, paddingLeft: CGFloat, paddingBottom: CGFloat, paddingRight: CGFloat, width: CGFloat, height: CGFloat) {
         
-        if let tp = top{
-            self.topAnchor.constraint(equalTo: tp, constant: tConst).isActive = true
+        translatesAutoresizingMaskIntoConstraints = false
+        
+        if let top = top {
+            self.topAnchor.constraint(equalTo: top, constant: paddingTop).isActive = true
         }
-        if let ld = lead{
-            self.leadingAnchor.constraint(equalTo: ld, constant: lConst).isActive = true
+        
+        if let left = left {
+            self.leftAnchor.constraint(equalTo: left, constant: paddingLeft).isActive = true
         }
-        if let tr = trail{
-            self.trailingAnchor.constraint(equalTo: tr, constant: -trConst).isActive = true
+        
+        if let bottom = bottom {
+            bottomAnchor.constraint(equalTo: bottom, constant: paddingBottom).isActive = true
         }
-        if let bt = bot{
-            self.bottomAnchor.constraint(equalTo: bt, constant: -bConst).isActive = true
+        
+        if let right = right {
+            rightAnchor.constraint(equalTo: right, constant: -paddingRight).isActive = true
         }
-        if let w = width{
-            self.widthAnchor.constraint(equalToConstant: w).isActive = true
+        
+        if width != 0 {
+            widthAnchor.constraint(equalToConstant: width).isActive = true
         }
-        if let h = height{
-            self.heightAnchor.constraint(equalToConstant: h).isActive = true
+        
+        if height != 0 {
+            heightAnchor.constraint(equalToConstant: height).isActive = true
         }
     }
 }
