@@ -14,13 +14,13 @@ class UserProfileHeader: UICollectionViewCell {
     var user:User?{
         didSet{
             guard let userLocal = user else { return }
-            setupProfileImage(user: userLocal)
             usernameLabel.text = userLocal.username
+            profileImageView.loadImage(with: userLocal.imageUrl)
         }
     }
     
-    let profileImageView: UIImageView = {
-        let iv = UIImageView()
+    let profileImageView: SKImageView = {
+        let iv = SKImageView()
         iv.layer.cornerRadius = 40
         iv.clipsToBounds = true
         return iv
@@ -48,7 +48,6 @@ class UserProfileHeader: UICollectionViewCell {
     
     let usernameLabel: UILabel = {
         let label = UILabel()
-        label.text = "Username"
         label.font = UIFont.boldSystemFont(ofSize: 15)
         return label
     }()
@@ -140,21 +139,6 @@ class UserProfileHeader: UICollectionViewCell {
         bottomDivider.backgroundColor = .seperator
         addSubview(bottomDivider)
         bottomDivider.anchor(top: nil, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 1)
-    }
-
-    fileprivate func setupProfileImage(user:User){
-        guard let url = URL(string: user.imageUrl) else{ return }
-        URLSession.shared.dataTask(with: url, completionHandler: { (data, response, error) in
-            if let err = error{
-                print("Error while getting profile image:", err.localizedDescription)
-                return
-            }
-            guard let data = data else{ return }
-            let image = UIImage(data: data)
-            DispatchQueue.main.async {
-                self.profileImageView.image = image
-            }
-        }).resume()
     }
     
     required init?(coder aDecoder: NSCoder) {

@@ -12,26 +12,32 @@ import Firebase
 class UserProfileController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
     
     let headerId = "headerId"
-    var user:User?
     let cellId = "cellId"
+    
+    var user:User?
+    var posts = [Post]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         collectionView.backgroundColor = .white
         collectionView.register(UserProfileHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerId)
-        collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: cellId)
-        
-        navigationItem.title = "User Profile"
+        collectionView.register(UserProfileCell.self, forCellWithReuseIdentifier: cellId)
         
         setupLogoutNavButton()
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
+        
         Service.fetchUserInfo { (user) in
-            self.title = user.username
+            self.navigationItem.title = user.username
             self.user = user
             self.collectionView.reloadData()
+        }
+        
+        self.posts.removeAll(keepingCapacity: false)
+        Service.fetchPostsChildAdded { (post) in
+            self.posts.insert(post, at: 0)
+            DispatchQueue.main.async {
+                self.collectionView.reloadData()
+            }
         }
     }
     
@@ -57,20 +63,20 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         present(controller, animated: true, completion: nil)
     }
     
+    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return posts.count
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! UserProfileCell
+        cell.post = posts[indexPath.item]
+        return cell
+    }
+    
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: headerId, for: indexPath) as! UserProfileHeader
         header.user = self.user
         return header
-    }
-    
-    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 10
-    }
-    
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath)
-        cell.backgroundColor = .purple
-        return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
@@ -78,11 +84,11 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        return 1
+        return 0.33333333
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width = view.frame.width / 3 - 2
+        let width = view.frame.width / 3 - 0.66666667
         return CGSize(width: width, height: width)
     }
     

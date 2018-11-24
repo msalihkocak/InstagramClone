@@ -22,6 +22,15 @@ class Utility: NSObject {
         block(isFormValid)
     }
     
+    class func validate(_ textView:UITextView, andExecute block:(Bool) -> ()){
+        guard let text = textView.text else { return }
+        var isTextViewValid = false
+        if text.count > 0{
+            isTextViewValid = true
+        }
+        block(isTextViewValid)
+    }
+    
     class func animateEnable(of button: UIButton, with block:(() -> Void)?){
         UIView.transition(with: button,
                           duration: 0.5,
@@ -42,5 +51,9 @@ class Utility: NSObject {
             button.backgroundColor = .registerButton
             button.isEnabled = false
         }
+    }
+    
+    class func getMainTabbarController() -> MainTabBarContorller?{
+        return UIApplication.shared.keyWindow?.rootViewController as? MainTabBarContorller
     }
 }
