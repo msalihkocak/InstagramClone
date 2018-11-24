@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Firebase
 
 class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
     
@@ -18,8 +19,11 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         collectionView.backgroundColor = .white
         collectionView.register(HomePostCell.self, forCellWithReuseIdentifier: cellId)
         setupNavigationBar()
-        
-        Service.fetchPostsValue { (posts) in
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        guard let currentUserId = Auth.auth().currentUser?.uid else{ return }
+        Service.fetchPostsValue(ofUserWith: currentUserId) { (posts) in
             self.posts.removeAll(keepingCapacity: false)
             self.posts.append(contentsOf: posts)
             self.posts.sort(by: {$0.timestamp > $1.timestamp})

@@ -26,7 +26,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         
         setupLogoutNavButton()
         
-        Service.fetchUserInfo { (user) in
+        Service.fetchCurrentUser { (user) in
             self.navigationItem.title = user.username
             self.user = user
             self.collectionView.reloadData()

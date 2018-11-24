@@ -14,14 +14,24 @@ class HomePostCell: UICollectionViewCell {
         didSet{
             guard let post = self.post else{ return }
             photoImageView.loadImage(with: post.imageUrl)
+            usernameLabel.text = post.user.username
+            profileImageView.loadImage(with: post.user.imageUrl)
+            self.setAttributedText(with: post)
         }
+    }
+    
+    func setAttributedText(with post:Post){
+        let attributedText = NSMutableAttributedString(string: "\(post.user.username) ", attributes: TextAttributes.titleAttributes)
+        attributedText.append(NSAttributedString(string: post.captionText, attributes: TextAttributes.captionAttributes))
+        attributedText.append(NSAttributedString(string: "\n\n", attributes: TextAttributes.gapAttributes))
+        attributedText.append(NSAttributedString(string: "1 week ago", attributes: TextAttributes.timestampAttributes))
+        usernameAndCaptionLabel.attributedText = attributedText
     }
     
     let profileImageView: SKImageView = {
         let iv = SKImageView()
         iv.contentMode = .scaleAspectFill
         iv.layer.cornerRadius = 20
-        iv.backgroundColor = UIColor.blue.withAlphaComponent(0.15)
         iv.clipsToBounds = true
         return iv
     }()
@@ -74,18 +84,7 @@ class HomePostCell: UICollectionViewCell {
     
     let usernameAndCaptionLabel: UILabel = {
         let label = UILabel()
-        let attributedText = NSMutableAttributedString(string: "Username ", attributes: TextAttributes.titleAttributes)
-        attributedText.append(NSAttributedString(string: "Çok iyi de oldu çok da güzel iyi oldu", attributes: TextAttributes.descAttributes))
-        label.attributedText = attributedText
         label.numberOfLines = 0
-        return label
-    }()
-    
-    let timestampLabel:UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 13)
-        label.textColor = .lightGray
-        label.text = "1 week ago"
         return label
     }()
     
@@ -119,10 +118,7 @@ class HomePostCell: UICollectionViewCell {
         bookmarkButton.anchor(top: threeButtonStackView.topAnchor, left: nil, bottom: threeButtonStackView.bottomAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 8, width: 36, height: 0)
         
         addSubview(usernameAndCaptionLabel)
-        usernameAndCaptionLabel.anchor(top: threeButtonStackView.bottomAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, paddingTop: 0, paddingLeft: 12, paddingBottom: 0, paddingRight: 8, width: 0, height: 0)
-        
-        addSubview(timestampLabel)
-        timestampLabel.anchor(top: usernameAndCaptionLabel.bottomAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, paddingTop: 8, paddingLeft: 8, paddingBottom: 0, paddingRight: 8, width: 0, height: 0)
+        usernameAndCaptionLabel.anchor(top: threeButtonStackView.bottomAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, paddingTop: 0, paddingLeft: 12, paddingBottom: 0, paddingRight: 12, width: 0, height: 0)
     }
     
     required init?(coder aDecoder: NSCoder) {
