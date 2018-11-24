@@ -115,6 +115,8 @@ class LoginController: UIViewController {
                 return
             }
             print("Successfully logged in", result?.user ?? "")
+            guard let tabbarController = Utility.getMainTabbarController() else{ return }
+            tabbarController.setupViewControllers()
             self.dismiss(animated: true, completion: nil)
         }
     }

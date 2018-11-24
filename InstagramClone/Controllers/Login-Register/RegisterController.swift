@@ -130,12 +130,14 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
                     guard let downloadUrlString = url?.absoluteString else { return }
                     let userValues = ["username": username, "email":email, "imageUrl": downloadUrlString]
                     let values = [id:userValues]
-                    Database.database().reference().child("users").updateChildValues(values, withCompletionBlock: { (error, ref) in
+                    Service.insertUserToDatabase(values: values, completionBlock: { (error) in
                         if let err = error{
                             print("Error while writing user to database", err.localizedDescription)
                             return
                         }
-                        print("User succcessfully registered to database", ref)
+                        print("User succcessfully registered to database")
+                        guard let tabbarController = Utility.getMainTabbarController() else{ return }
+                        tabbarController.setupViewControllers()
                         self.dismiss(animated: true, completion: nil)
                     })
 
