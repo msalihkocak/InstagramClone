@@ -14,6 +14,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
     let headerId = "headerId"
     let cellId = "cellId"
     
+    var selectedUser:User?
     var user:User?
     var posts = [Post]()
     
@@ -26,17 +27,31 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         
         setupLogoutNavButton()
         
-        Service.fetchCurrentUser { (user) in
-            self.navigationItem.title = user.username
-            self.user = user
-            self.collectionView.reloadData()
-        }
-        
-        self.posts.removeAll(keepingCapacity: false)
-        Service.fetchPostsChildAdded { (post) in
-            self.posts.insert(post, at: 0)
-            DispatchQueue.main.async {
+        if let userToLoad = selectedUser{
+            self.user = selectedUser
+            self.navigationItem.title = userToLoad.username
+            self.navigationItem.rightBarButtonItem = nil
+            
+            self.posts.removeAll(keepingCapacity: false)
+            Service.fetchPostsChildAdded(of: userToLoad.uid) { (post) in
+                self.posts.insert(post, at: 0)
+                DispatchQueue.main.async {
+                    self.collectionView.reloadData()
+                }
+            }
+        }else{
+            Service.fetchCurrentUser { (user) in
+                self.navigationItem.title = user.username
+                self.user = user
                 self.collectionView.reloadData()
+                
+                self.posts.removeAll(keepingCapacity: false)
+                Service.fetchPostsChildAdded(of: user.uid, completion: { (post) in
+                    self.posts.insert(post, at: 0)
+                    DispatchQueue.main.async {
+                        self.collectionView.reloadData()
+                    }
+                })
             }
         }
     }

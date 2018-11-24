@@ -26,9 +26,26 @@ class Service: NSObject {
         }
     }
     
-    class func fetchPostsChildAdded(completion: @escaping (Post) -> ()){
+    class func fetchUsers(completion: @escaping ([User]) -> ()){
         guard let uid = Auth.auth().currentUser?.uid else{ return }
-        let reference = Database.database().reference().child("posts").child(uid)
+        let ref = Database.database().reference().child("users")
+        ref.observeSingleEvent(of: .value) { (snapshot) in
+            guard let valuesDict = snapshot.value as? [String:Any] else { return }
+            var users = [User]()
+            valuesDict.forEach({ (key, userValues) in
+                guard var values = userValues as? [String:Any] else{ return }
+                values["uid"] = key
+                let user = User(with: values)
+                if user.uid != uid {
+                    users.append(user)
+                }
+            })
+            completion(users)
+        }
+    }
+    
+    class func fetchPostsChildAdded(of userId:String, completion: @escaping (Post) -> ()){
+        let reference = Database.database().reference().child("posts").child(userId)
         reference.queryOrdered(byChild: "creationDate").observe(.childAdded) { (snapshot) in
             let post = Post(snapshot: snapshot)
             completion(post)
