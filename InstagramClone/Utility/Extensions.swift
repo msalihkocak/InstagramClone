@@ -21,6 +21,9 @@ extension UIColor{
 
 struct TextAttributes {
     static let titleAttributes = [NSAttributedString.Key.font:UIFont.boldSystemFont(ofSize: 14)]
+    static let captionAttributes = [NSAttributedString.Key.font:UIFont.systemFont(ofSize: 14)]
+    static let timestampAttributes = [NSAttributedString.Key.foregroundColor:UIColor.gray,NSAttributedString.Key.font:UIFont.boldSystemFont(ofSize: 13)]
+    static let gapAttributes = [NSAttributedString.Key.font:UIFont.boldSystemFont(ofSize: 4)]
     static let descAttributes = [NSAttributedString.Key.foregroundColor:UIColor.lightGray, NSAttributedString.Key.font : UIFont.systemFont(ofSize: 14)]
     static let signupButtonAttributes = [NSAttributedString.Key.foregroundColor: UIColor.buttonBlue, NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 14)]
 }

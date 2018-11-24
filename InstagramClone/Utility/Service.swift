@@ -11,10 +11,17 @@ import Firebase
 
 class Service: NSObject {
     
-    class func fetchUserInfo(completion: @escaping (User) -> ()){
+    class func fetchCurrentUser(completion: @escaping (User) -> ()){
         guard let uid = Auth.auth().currentUser?.uid else{ return }
         Database.database().reference().child("users").child(uid).observeSingleEvent(of: .value) { (snapshot) in
-            let user = User(snapshot: snapshot)
+            let user = User(uid: uid, snapshot: snapshot)
+            completion(user)
+        }
+    }
+    
+    class func fetchUser(with userId:String , completion: @escaping (User) -> ()){
+        Database.database().reference().child("users").child(userId).observeSingleEvent(of: .value) { (snapshot) in
+            let user = User(uid: userId, snapshot: snapshot)
             completion(user)
         }
     }
@@ -28,20 +35,21 @@ class Service: NSObject {
         }
     }
     
-    class func fetchPostsValue(completion: @escaping ([Post]) -> ()){
-        guard let uid = Auth.auth().currentUser?.uid else{ return }
-        let reference = Database.database().reference().child("posts").child(uid)
-        reference.queryOrdered(byChild: "creationDate").observeSingleEvent(of: .value) { (snapshot) in
-            guard let valuesDict = snapshot.value as? [String:Any] else { return }
-            var posts = [Post]()
-            valuesDict.forEach({ (key, postValues) in
-                guard var values = postValues as? [String:Any] else{ return }
-                let post = Post(with: values)
-                posts.append(post)
-            })
-            completion(posts)
+    class func fetchPostsValue(ofUserWith id:String, completion: @escaping ([Post]) -> ()){
+        Service.fetchUser(with: id) { (user) in
+            let reference = Database.database().reference().child("posts").child(user.uid)
+            reference.queryOrdered(byChild: "creationDate").observeSingleEvent(of: .value) { (snapshot) in
+                guard let valuesDict = snapshot.value as? [String:Any] else { return }
+                var posts = [Post]()
+                valuesDict.forEach({ (key, postValues) in
+                    guard var values = postValues as? [String:Any] else{ return }
+                    values["user"] = user
+                    let post = Post(with: values)
+                    posts.append(post)
+                })
+                completion(posts)
+            }
         }
-
     }
     
     class func insertUserToDatabase(values:[String:Any], completionBlock:@escaping (Error?) -> ()){

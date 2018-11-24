@@ -16,6 +16,7 @@ struct Post {
     var timestamp:String
     var imageWidth:String
     var imageHeight:String
+    var user:User
     
     init() {
         captionText = ""
@@ -23,6 +24,7 @@ struct Post {
         timestamp = ""
         imageWidth = ""
         imageHeight = ""
+        user = User()
     }
     
     init(snapshot:DataSnapshot) {
@@ -39,5 +41,6 @@ struct Post {
         self.timestamp = values["timestamp"] as? String ?? ""
         self.imageWidth = values["imageWidth"] as? String ?? ""
         self.imageHeight = values["imageHeight"] as? String ?? ""
+        self.user = values["user"] as? User ?? User()
     }
 }
