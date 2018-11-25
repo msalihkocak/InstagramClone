@@ -48,5 +48,7 @@
 	</array>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Instagram clone needs to fetch your photos</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Instagram clone needs to use camera to take photo</string>
 </dict>
 </plist>

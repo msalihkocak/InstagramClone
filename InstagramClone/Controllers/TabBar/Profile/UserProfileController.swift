@@ -27,33 +27,60 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         
         setupLogoutNavButton()
         
-        if let userToLoad = selectedUser{
-            self.user = selectedUser
-            self.navigationItem.title = userToLoad.username
+//        fetchOrGetUser()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        fetchOrGetUser()
+    }
+    
+    func fetchOrGetUser(){
+        if selectedUser != nil{
+            user = selectedUser!
             self.navigationItem.rightBarButtonItem = nil
-            
-            self.posts.removeAll(keepingCapacity: false)
-            Service.fetchPostsChildAdded(of: userToLoad.uid) { (post) in
-                self.posts.insert(post, at: 0)
-                DispatchQueue.main.async {
-                    self.collectionView.reloadData()
-                }
-            }
+            self.configureUI()
         }else{
             Service.fetchCurrentUser { (user) in
-                self.navigationItem.title = user.username
                 self.user = user
-                self.collectionView.reloadData()
-                
-                self.posts.removeAll(keepingCapacity: false)
-                Service.fetchPostsChildAdded(of: user.uid, completion: { (post) in
-                    self.posts.insert(post, at: 0)
-                    DispatchQueue.main.async {
-                        self.collectionView.reloadData()
-                    }
-                })
+                self.configureUI()
             }
         }
+    }
+    
+    func configureUI(){
+        guard let user = user else{ return }
+        self.navigationItem.title = user.username
+        fetchFollowersAndFollowings(of: user)
+        fetchPosts(of: user)
+    }
+    
+    func fetchFollowersAndFollowings(of user:User){
+        Service.fetchFollower(ofUserWith: user.uid, completionBlock: { (followers) in
+            self.user?.followers = followers
+            DispatchQueue.main.async {
+                self.collectionView.reloadData()
+            }
+        })
+        
+        Service.fetchFollowing(ofUserWith: user.uid) { (followings) in
+            self.user?.followings = followings
+            DispatchQueue.main.async {
+                self.collectionView.reloadData()
+            }
+        }
+    }
+    
+    func fetchPosts(of user:User){
+        self.posts.removeAll(keepingCapacity: false)
+        Service.fetchPostsChildAdded(of: user.uid, completion: { (post) in
+            self.posts.insert(post, at: 0)
+            self.user?.postsCount += 1
+            DispatchQueue.main.async {
+                self.collectionView.reloadData()
+            }
+        })
     }
     
     func setupLogoutNavButton(){

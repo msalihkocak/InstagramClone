@@ -11,11 +11,73 @@ import Firebase
 
 class UserProfileHeader: UICollectionViewCell {
     
+    var isUserCurrentlyBeingFollowed = false
+    
     var user:User?{
         didSet{
             guard let userLocal = user else { return }
+            guard let loggedInUser = Auth.auth().currentUser else{ return }
             usernameLabel.text = userLocal.username
             profileImageView.loadImage(with: userLocal.imageUrl)
+            isUserCurrentlyBeingFollowed = userLocal.followers.contains(loggedInUser.uid)
+            self.setupFollowEditButton(for: userLocal)
+            LabelType.allCases.forEach{self.setLabelCount(type: $0)}
+        }
+    }
+    
+    fileprivate func setupFollowEditButton(for user:User){
+        guard let loggedInUser = Auth.auth().currentUser else{ return }
+        if loggedInUser.uid == user.uid{
+            editFollowButton.setTitle("Edit Profile", for: .normal)
+            editFollowButton.layer.borderColor = UIColor.seperator.cgColor
+            editFollowButton.tintColor = .black
+            editFollowButton.layer.borderWidth = 1
+            editFollowButton.backgroundColor = .clear
+            addTargetToFollowEditButton(isLoggedInUser: true)
+        }else{
+            if isUserCurrentlyBeingFollowed{
+                editFollowButton.setTitle("Unfollow", for: .normal)
+                editFollowButton.tintColor = .black
+                editFollowButton.backgroundColor = .seperator
+            }else{
+                editFollowButton.setTitle("Follow", for: .normal)
+                editFollowButton.tintColor = .white
+                editFollowButton.backgroundColor = .buttonBlue
+            }
+            
+            editFollowButton.layer.borderColor = UIColor.clear.cgColor
+            editFollowButton.layer.borderWidth = 0
+            
+            addTargetToFollowEditButton(isLoggedInUser: false)
+        }
+    }
+    
+    fileprivate func setLabelCount(type:LabelType){
+        guard let userLocal = user else { return }
+        switch type {
+        case .followers:
+            let attributedText =  NSMutableAttributedString(string: "\(userLocal.followers.count)\n", attributes: TextAttributes.titleAttributes)
+            attributedText.append(NSAttributedString(string: "followers", attributes: TextAttributes.descAttributes))
+            followersLabel.attributedText = attributedText
+        case .following:
+            let attributedText =  NSMutableAttributedString(string: "\(userLocal.followings.count)\n", attributes: TextAttributes.titleAttributes)
+            attributedText.append(NSAttributedString(string: "following", attributes: TextAttributes.descAttributes))
+            followingLabel.attributedText = attributedText
+        case .posts:
+            let attributedText =  NSMutableAttributedString(string: "\(userLocal.postsCount)\n", attributes: TextAttributes.titleAttributes)
+            attributedText.append(NSAttributedString(string: "posts", attributes: TextAttributes.descAttributes))
+            postsLabel.attributedText = attributedText
+        }
+        
+    }
+    
+    fileprivate func addTargetToFollowEditButton(isLoggedInUser:Bool){
+        if editFollowButton.allTargets.count == 0{
+            if isLoggedInUser{
+                editFollowButton.addTarget(self, action: #selector(handleEditProfile), for: .touchUpInside)
+            }else{
+                editFollowButton.addTarget(self, action: #selector(handleFollowUnfollow), for: .touchUpInside)
+            }
         }
     }
     
@@ -55,45 +117,29 @@ class UserProfileHeader: UICollectionViewCell {
     let postsLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .center
-        let attributedText =  NSMutableAttributedString(string: "11\n", attributes: TextAttributes.titleAttributes)
-        attributedText.append(NSAttributedString(string: "posts", attributes: TextAttributes.descAttributes))
-        label.attributedText = attributedText
         label.numberOfLines = 0
-        label.font = UIFont.systemFont(ofSize: 14)
         return label
     }()
     
     let followersLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .center
-        let attributedText =  NSMutableAttributedString(string: "50\n", attributes: TextAttributes.titleAttributes)
-        attributedText.append(NSAttributedString(string: "followers", attributes: TextAttributes.descAttributes))
-        label.attributedText = attributedText
         label.numberOfLines = 0
-        label.font = UIFont.systemFont(ofSize: 14)
         return label
     }()
     
     let followingLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .center
-        let attributedText =  NSMutableAttributedString(string: "35\n", attributes: TextAttributes.titleAttributes)
-        attributedText.append(NSAttributedString(string: "following", attributes: TextAttributes.descAttributes))
-        label.attributedText = attributedText
-        label.font = UIFont.systemFont(ofSize: 14)
         label.numberOfLines = 0
         return label
     }()
     
-    let editProfileButton: UIButton = {
+    let editFollowButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Edit Profile", for: .normal)
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 15)
-        button.tintColor = .black
         button.layer.cornerRadius = 4
         button.clipsToBounds = true
-        button.layer.borderColor = UIColor.seperator.cgColor
-        button.layer.borderWidth = 1
         return button
     }()
     
@@ -127,8 +173,8 @@ class UserProfileHeader: UICollectionViewCell {
         addSubview(statsStackView)
         statsStackView.anchor(top: topAnchor, left: profileImageView.rightAnchor, bottom: nil, right: rightAnchor, paddingTop: 20, paddingLeft: 10, paddingBottom: 0, paddingRight: 20, width: 0, height: 40)
 
-        addSubview(editProfileButton)
-        editProfileButton.anchor(top: statsStackView.bottomAnchor, left: statsStackView.leftAnchor, bottom: nil, right: statsStackView.rightAnchor, paddingTop: 8, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 30)
+        addSubview(editFollowButton)
+        editFollowButton.anchor(top: statsStackView.bottomAnchor, left: statsStackView.leftAnchor, bottom: nil, right: statsStackView.rightAnchor, paddingTop: 8, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 30)
 
         let topDivider = UIView()
         topDivider.backgroundColor = .seperator
@@ -141,7 +187,36 @@ class UserProfileHeader: UICollectionViewCell {
         bottomDivider.anchor(top: nil, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 1)
     }
     
+    @objc func handleFollowUnfollow(){
+        guard let userWhichProfileIsShowing = user else { return }
+        guard let loggedInUser = Auth.auth().currentUser else { return }
+        if isUserCurrentlyBeingFollowed{
+            Service.unfollow(userWhichProfileIsShowing) {
+                guard let index = userWhichProfileIsShowing.followers.firstIndex(of: loggedInUser.uid) else{ return }
+                self.user?.followers.remove(at: index)
+                self.setLabelCount(type: .followers)
+                self.setupFollowEditButton(for: userWhichProfileIsShowing)
+            }
+        }else{
+            Service.follow(userWhichProfileIsShowing) {
+                self.user?.followers.append(loggedInUser.uid)
+                self.setLabelCount(type: .followers)
+                self.setupFollowEditButton(for: userWhichProfileIsShowing)
+            }
+        }
+    }
+    
+    @objc func handleEditProfile(){
+        print("Handling editprofile")
+    }
+    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+}
+
+enum LabelType: CaseIterable {
+    case followers
+    case following
+    case posts
 }

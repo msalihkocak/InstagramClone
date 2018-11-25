@@ -56,4 +56,13 @@ class Utility: NSObject {
     class func getMainTabbarController() -> MainTabBarContorller?{
         return UIApplication.shared.keyWindow?.rootViewController as? MainTabBarContorller
     }
+    
+    class func convertTimestampToReadableDateString(timestamp:String) -> String{
+        guard let timestamp = TimeInterval(timestamp) else{ return "" }
+        let date = Date(timeIntervalSince1970: timestamp)
+        return date.timeAgoDisplay()
+//        let dateFormatter = DateFormatter()
+//        dateFormatter.dateFormat = "dd/MM/YYY hh:mm"
+//        return dateFormatter.string(from: date)
+    }
 }

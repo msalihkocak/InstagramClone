@@ -18,21 +18,54 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         super.viewDidLoad()
         collectionView.backgroundColor = .white
         collectionView.register(HomePostCell.self, forCellWithReuseIdentifier: cellId)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(handleRefreshControl), name: NotificationName.justPostedAPost, object: nil)
+        
+        setupRefreshControl()
         setupNavigationBar()
+        fetchPostsForHomeFeed()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        guard let currentUserId = Auth.auth().currentUser?.uid else{ return }
-        Service.fetchPostsValue(ofUserWith: currentUserId) { (posts) in
+    func setupRefreshControl(){
+        let refreshControl = UIRefreshControl()
+        refreshControl.attributedTitle = NSAttributedString(string: "Refreshing", attributes: TextAttributes.titleAttributes)
+        refreshControl.addTarget(self, action: #selector(handleRefreshControl), for: .valueChanged)
+        collectionView.refreshControl = refreshControl
+    }
+    
+    @objc func handleRefreshControl(){
+        fetchPostsForHomeFeed()
+    }
+    
+    @objc func handleCameraTapped(){
+        let cameraController = CameraController()
+//        cameraController.modalTransitionStyle = .partialCurl
+        present(cameraController, animated: true, completion: nil)
+    }
+    
+    func fetchPostsForHomeFeed(){
+        guard let loggedInUserId = Auth.auth().currentUser?.uid else{ return }
+        Service.fetchFollowing(ofUserWith: loggedInUserId) { (followingIds) in
             self.posts.removeAll(keepingCapacity: false)
-            self.posts.append(contentsOf: posts)
-            self.posts.sort(by: {$0.timestamp > $1.timestamp})
-            self.collectionView.reloadData()
+            // Perfectly described :)
+            var usersIdsWhichTheirPostsWillBeShownInHomeFeed = followingIds
+            // We also want to see our posts as well
+            usersIdsWhichTheirPostsWillBeShownInHomeFeed.append(loggedInUserId)
+            usersIdsWhichTheirPostsWillBeShownInHomeFeed.forEach({ (userId) in
+                Service.fetchPostsValue(ofUserWith: userId) { (posts) in
+                    self.posts.append(contentsOf: posts)
+                    self.posts.sort(by: {$0.timestamp > $1.timestamp})
+                    self.collectionView.reloadData()
+                    self.collectionView.refreshControl?.endRefreshing()
+                }
+            })
         }
     }
     
     func setupNavigationBar(){
         navigationItem.titleView = UIImageView(image: #imageLiteral(resourceName: "logo2"))
+        
+        navigationItem.leftBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "camera3").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(handleCameraTapped))
     }
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {

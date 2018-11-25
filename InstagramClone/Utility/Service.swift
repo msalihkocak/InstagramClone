@@ -75,6 +75,71 @@ class Service: NSObject {
         })
     }
     
+    class func fetchFollowing(ofUserWith id:String, completionBlock:@escaping ([String]) -> ()){
+        let followingRef = Database.database().reference().child("following").child(id)
+        Service.fetchFollowerOrFollowingNode(with: followingRef, completionBlock: completionBlock)
+    }
+    
+    class func fetchFollower(ofUserWith id:String, completionBlock:@escaping ([String]) -> ()){
+        let followerRef = Database.database().reference().child("followers").child(id)
+        Service.fetchFollowerOrFollowingNode(with: followerRef, completionBlock: completionBlock)
+    }
+    
+    fileprivate class func fetchFollowerOrFollowingNode(with ref:DatabaseReference, completionBlock:@escaping ([String]) -> ()){
+        ref.observeSingleEvent(of: .value, with: { (snapshot) in
+            var ids = [String]()
+            guard let valuesDict = snapshot.value as? [String:Any] else {
+                completionBlock(ids)
+                return
+            }
+            valuesDict.forEach({ (key, value) in ids.append(key) })
+            completionBlock(ids)
+        })
+    }
+    
+    class func follow(_ user:User, completionBlock:@escaping () -> ()){
+        guard let loggedInUser = Auth.auth().currentUser?.uid else{ return }
+        let followingValues = [user.uid:1]
+        let followerValues = [loggedInUser:1]
+        let rootRef = Database.database().reference()
+        rootRef.child("following").child(loggedInUser).updateChildValues(followingValues) { (error, ref) in
+            if let err = error{
+                print("Following failed with error:", err.localizedDescription)
+                return
+            }
+            print("Added to following list successfully")
+            
+            rootRef.child("followers").child(user.uid).updateChildValues(followerValues, withCompletionBlock: { (error, ref) in
+                if let err = error{
+                    print("Follower failed with error:", err.localizedDescription)
+                    return
+                }
+                print("Added to followers list successfully")
+                completionBlock()
+            })
+        }
+    }
+    
+    class func unfollow(_ user:User, completionBlock:@escaping () -> ()){
+        guard let loggedInUser = Auth.auth().currentUser else{ return }
+        let rootRef = Database.database().reference()
+        rootRef.child("following").child(loggedInUser.uid).child(user.uid).removeValue { (error, ref) in
+            if let err = error{
+                print("Removing from following list failed with error:", err.localizedDescription)
+                return
+            }
+            print("Removed from followings list successfully")
+            rootRef.child("followers").child(user.uid).child(loggedInUser.uid).removeValue(completionBlock: { (error, ref) in
+                if let err = error{
+                    print("Removing from followers list failed with error:", err.localizedDescription)
+                    return
+                }
+                print("Unfollowed successfully")
+                completionBlock()
+            })
+        }
+    }
+    
     class func savePostToDatabase(withImageUrl imageUrl:String, andCaptionText captionText:String, size:CGSize, completionBlock: @escaping (Error?) -> ()){
         let width = Int(size.width)
         let height = Int(size.height)

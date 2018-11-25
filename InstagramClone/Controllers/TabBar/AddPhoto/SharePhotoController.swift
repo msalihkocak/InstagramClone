@@ -86,6 +86,7 @@ class SharePhotoController: UIViewController, UITextViewDelegate {
             }
             print("Post saved successfully.")
             self.dismiss(animated: true, completion: nil)
+            NotificationCenter.default.post(name: NotificationName.justPostedAPost, object: nil)
         })
     }
     

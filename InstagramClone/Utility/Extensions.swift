@@ -19,6 +19,10 @@ extension UIColor{
     static let buttonBlue = UIColor.rgb(17, 154, 237)
 }
 
+struct NotificationName {
+    static let justPostedAPost = Notification.Name(rawValue: "justPostedAPost")
+}
+
 struct TextAttributes {
     static let titleAttributes = [NSAttributedString.Key.font:UIFont.boldSystemFont(ofSize: 14)]
     static let captionAttributes = [NSAttributedString.Key.font:UIFont.systemFont(ofSize: 14)]
@@ -43,7 +47,7 @@ extension UIView {
         }
         
         if let bottom = bottom {
-            bottomAnchor.constraint(equalTo: bottom, constant: paddingBottom).isActive = true
+            bottomAnchor.constraint(equalTo: bottom, constant: -paddingBottom).isActive = true
         }
         
         if let right = right {
@@ -69,6 +73,8 @@ class SKImageView:UIImageView{
     func loadImage(with urlString:String){
         lastURLUsedToLoadImage = urlString
         
+        self.image = nil
+        
         if let cachedImage = imageCache[urlString]{
             self.image = cachedImage
             return
@@ -93,5 +99,28 @@ class SKImageView:UIImageView{
                 self.image = image
             }
         }).resume()
+    }
+}
+
+extension Date {
+    func timeAgoDisplay() -> String {
+        let secondsAgo = Int(Date().timeIntervalSince(self))
+        
+        let minute = 60
+        let hour = 60 * minute
+        let day = 24 * hour
+        let week = 7 * day
+        
+        if secondsAgo < minute {
+            return "\(secondsAgo) seconds ago"
+        } else if secondsAgo < hour {
+            return "\(secondsAgo / minute) minutes ago"
+        } else if secondsAgo < day {
+            return "\(secondsAgo / hour) hours ago"
+        } else if secondsAgo < week {
+            return "\(secondsAgo / day) days ago"
+        }
+        
+        return "\(secondsAgo / week) weeks ago"
     }
 }

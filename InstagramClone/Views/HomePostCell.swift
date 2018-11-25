@@ -24,7 +24,9 @@ class HomePostCell: UICollectionViewCell {
         let attributedText = NSMutableAttributedString(string: "\(post.user.username) ", attributes: TextAttributes.titleAttributes)
         attributedText.append(NSAttributedString(string: post.captionText, attributes: TextAttributes.captionAttributes))
         attributedText.append(NSAttributedString(string: "\n\n", attributes: TextAttributes.gapAttributes))
-        attributedText.append(NSAttributedString(string: "1 week ago", attributes: TextAttributes.timestampAttributes))
+        
+        let dateStr = Utility.convertTimestampToReadableDateString(timestamp: post.timestamp)
+        attributedText.append(NSAttributedString(string: dateStr, attributes: TextAttributes.timestampAttributes))
         usernameAndCaptionLabel.attributedText = attributedText
     }
     

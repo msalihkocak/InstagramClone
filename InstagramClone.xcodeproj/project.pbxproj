@@ -22,6 +22,9 @@
 		49882AA721A71018009457D4 /* Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49882AA621A71018009457D4 /* Service.swift */; };
 		7F42A67A1BC5124CCA2E819B /* Pods_InstagramClone.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 56EB8E6E10A732DEF5CF419D /* Pods_InstagramClone.framework */; };
 		9D4CB0C621A9FA8E004CA660 /* UserSearchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D4CB0C521A9FA8E004CA660 /* UserSearchCell.swift */; };
+		9D4CB0C821AAE93F004CA660 /* CameraController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D4CB0C721AAE93F004CA660 /* CameraController.swift */; };
+		9D4CB0CA21AB0132004CA660 /* PreviewImageContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D4CB0C921AB0132004CA660 /* PreviewImageContainerView.swift */; };
+		9D4CB0CC21AB1FC2004CA660 /* SKAnimationPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D4CB0CB21AB1FC2004CA660 /* SKAnimationPresenter.swift */; };
 		9D8F904F21A87EB6004765E1 /* FavoritesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D8F904E21A87EB6004765E1 /* FavoritesController.swift */; };
 		9D8F905121A87EC5004765E1 /* SearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D8F905021A87EC5004765E1 /* SearchController.swift */; };
 		9D8F905321A87ECE004765E1 /* HomeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D8F905221A87ECE004765E1 /* HomeController.swift */; };
@@ -52,6 +55,9 @@
 		49882AA621A71018009457D4 /* Service.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Service.swift; sourceTree = "<group>"; };
 		56EB8E6E10A732DEF5CF419D /* Pods_InstagramClone.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_InstagramClone.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9D4CB0C521A9FA8E004CA660 /* UserSearchCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSearchCell.swift; sourceTree = "<group>"; };
+		9D4CB0C721AAE93F004CA660 /* CameraController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraController.swift; sourceTree = "<group>"; };
+		9D4CB0C921AB0132004CA660 /* PreviewImageContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewImageContainerView.swift; sourceTree = "<group>"; };
+		9D4CB0CB21AB1FC2004CA660 /* SKAnimationPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SKAnimationPresenter.swift; sourceTree = "<group>"; };
 		9D8F904E21A87EB6004765E1 /* FavoritesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesController.swift; sourceTree = "<group>"; };
 		9D8F905021A87EC5004765E1 /* SearchController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchController.swift; sourceTree = "<group>"; };
 		9D8F905221A87ECE004765E1 /* HomeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeController.swift; sourceTree = "<group>"; };
@@ -211,7 +217,10 @@
 		9D8F904B21A87E6B004765E1 /* Home */ = {
 			isa = PBXGroup;
 			children = (
+				9D4CB0C721AAE93F004CA660 /* CameraController.swift */,
 				9D8F905221A87ECE004765E1 /* HomeController.swift */,
+				9D4CB0C921AB0132004CA660 /* PreviewImageContainerView.swift */,
+				9D4CB0CB21AB1FC2004CA660 /* SKAnimationPresenter.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -365,10 +374,13 @@
 				9D8F906021A94DFB004765E1 /* UserProfileCell.swift in Sources */,
 				9D8F906221A99734004765E1 /* HomePostCell.swift in Sources */,
 				49882AA721A71018009457D4 /* Service.swift in Sources */,
+				9D4CB0C821AAE93F004CA660 /* CameraController.swift in Sources */,
 				49882AA521A6F87D009457D4 /* UserProfileHeader.swift in Sources */,
 				49882A9921A5F001009457D4 /* Extensions.swift in Sources */,
 				9D8F905821A8A50C004765E1 /* AddPhotoCell.swift in Sources */,
 				9D8F905321A87ECE004765E1 /* HomeController.swift in Sources */,
+				9D4CB0CC21AB1FC2004CA660 /* SKAnimationPresenter.swift in Sources */,
+				9D4CB0CA21AB0132004CA660 /* PreviewImageContainerView.swift in Sources */,
 				49882AA221A6F1AE009457D4 /* User.swift in Sources */,
 				9D8F905621A8919B004765E1 /* AddPhotoController.swift in Sources */,
 				9D8F905C21A92C59004765E1 /* SharePhotoController.swift in Sources */,
