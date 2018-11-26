@@ -9,9 +9,15 @@
 import UIKit
 import Firebase
 
+protocol UserProfileHeaderDelegate {
+    func didSwitchToGrid()
+    func didSwitchToList()
+}
+
 class UserProfileHeader: UICollectionViewCell {
     
     var isUserCurrentlyBeingFollowed = false
+    var headerDelegate: UserProfileHeaderDelegate?
     
     var user:User?{
         didSet{
@@ -88,16 +94,19 @@ class UserProfileHeader: UICollectionViewCell {
         return iv
     }()
     
-    let gridButton: UIButton = {
+    lazy var gridButton: UIButton = {
         let button = UIButton(type: .system)
         button.setImage(#imageLiteral(resourceName: "grid"), for: .normal)
+        button.tintColor = .buttonBlue
+        button.addTarget(self, action: #selector(handleViewToGrid), for: .touchUpInside)
         return button
     }()
     
-    let listButton: UIButton = {
+    lazy var listButton: UIButton = {
         let button = UIButton(type: .system)
         button.setImage(#imageLiteral(resourceName: "list"), for: .normal)
         button.tintColor = UIColor.black.withAlphaComponent(0.1)
+        button.addTarget(self, action: #selector(handleViewToList), for: .touchUpInside)
         return button
     }()
     
@@ -185,6 +194,18 @@ class UserProfileHeader: UICollectionViewCell {
         bottomDivider.backgroundColor = .seperator
         addSubview(bottomDivider)
         bottomDivider.anchor(top: nil, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 1)
+    }
+    
+    @objc func handleViewToList(){
+        listButton.tintColor = .buttonBlue
+        gridButton.tintColor = UIColor.black.withAlphaComponent(0.1)
+        headerDelegate?.didSwitchToList()
+    }
+    
+    @objc func handleViewToGrid(){
+        gridButton.tintColor = .buttonBlue
+        listButton.tintColor = UIColor.black.withAlphaComponent(0.1)
+        headerDelegate?.didSwitchToGrid()
     }
     
     @objc func handleFollowUnfollow(){

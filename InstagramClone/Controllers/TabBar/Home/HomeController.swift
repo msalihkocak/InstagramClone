@@ -52,8 +52,8 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
             // We also want to see our posts as well
             usersIdsWhichTheirPostsWillBeShownInHomeFeed.append(loggedInUserId)
             usersIdsWhichTheirPostsWillBeShownInHomeFeed.forEach({ (userId) in
-                Service.fetchPostsValue(ofUserWith: userId) { (posts) in
-                    self.posts.append(contentsOf: posts)
+                Service.fetchPostsValue(ofUserWith: userId) { (post) in
+                    self.posts.append(post)
                     self.posts.sort(by: {$0.timestamp > $1.timestamp})
                     self.collectionView.reloadData()
                     self.collectionView.refreshControl?.endRefreshing()
@@ -71,8 +71,17 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     func didTapComment(of post:Post) {
         let commentController = CommentController()
         commentController.post = post
-//        commentController.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(commentController, animated: true)
+    }
+    
+    func didLikePost(at cell: HomePostCell) {
+        // Perform like on post and wait for the result to animate like button
+        guard let indexPath = collectionView.indexPath(for: cell) else{ return }
+        let postToBeLiked = posts[indexPath.row]
+        Service.like(postToBeLiked) {
+            self.posts[indexPath.row].hasLiked = !postToBeLiked.hasLiked
+            self.collectionView.reloadItems(at: [indexPath])
+        }
     }
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {

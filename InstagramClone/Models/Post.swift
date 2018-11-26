@@ -18,6 +18,7 @@ struct Post {
     var imageWidth:String
     var imageHeight:String
     var user:User
+    var hasLiked:Bool
     
     init() {
         captionText = ""
@@ -27,6 +28,7 @@ struct Post {
         imageHeight = ""
         user = User()
         postId = ""
+        hasLiked = false
     }
     
     init(snapshot:DataSnapshot) {
@@ -45,5 +47,6 @@ struct Post {
         self.imageHeight = values["imageHeight"] as? String ?? ""
         self.user = values["user"] as? User ?? User()
         self.postId = values["postId"] as? String ?? ""
+        self.hasLiked = values["hasLiked"] as? Bool ?? false
     }
 }

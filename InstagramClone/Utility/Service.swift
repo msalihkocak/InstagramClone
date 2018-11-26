@@ -44,31 +44,33 @@ class Service: NSObject {
         }
     }
     
-    class func fetchPostsChildAdded(of userId:String, completion: @escaping (Post) -> ()){
-        let reference = Database.database().reference().child("posts").child(userId)
+    class func fetchPostsChildAdded(of user:User, completion: @escaping (Post) -> ()){
+        let reference = Database.database().reference().child("posts").child(user.uid)
         reference.queryOrdered(byChild: "creationDate").observe(.childAdded) { (snapshot) in
             guard var valuesDict = snapshot.value as? [String:Any] else { return }
             let postId = snapshot.key
             valuesDict["postId"] = postId
+            valuesDict["user"] = user
             let post = Post(with: valuesDict)
             completion(post)
         }
     }
     
-    class func fetchPostsValue(ofUserWith id:String, completion: @escaping ([Post]) -> ()){
+    class func fetchPostsValue(ofUserWith id:String, completion: @escaping (Post) -> ()){
         Service.fetchUser(with: id) { (user) in
             let reference = Database.database().reference().child("posts").child(user.uid)
             reference.queryOrdered(byChild: "creationDate").observeSingleEvent(of: .value) { (snapshot) in
                 guard let valuesDict = snapshot.value as? [String:Any] else { return }
-                var posts = [Post]()
-                valuesDict.forEach({ (key, postValues) in
+                for (key, postValues) in valuesDict{
                     guard var values = postValues as? [String:Any] else{ return }
                     values["postId"] = key
                     values["user"] = user
-                    let post = Post(with: values)
-                    posts.append(post)
-                })
-                completion(posts)
+                    Service.fetchIfUserLiked(thePostWith: key, completionBlock: { (hasLiked) in
+                        values["hasLiked"] = hasLiked
+                        let post = Post(with: values)
+                        completion(post)
+                    })
+                }
             }
         }
     }
@@ -170,6 +172,32 @@ class Service: NSObject {
                 print("Unfollowed successfully")
                 completionBlock()
             })
+        }
+    }
+    
+    class func like(_ post:Post, completionBlock:@escaping () -> ()){
+        guard let loggedInUser = Auth.auth().currentUser else{ return }
+        let likePostRef = Database.database().reference().child("likes").child(post.postId)
+        let hasLiked = post.hasLiked == false ? 1 : 0
+        let values = [loggedInUser.uid:hasLiked]
+        likePostRef.updateChildValues(values) { (error, ref) in
+            if let error = error{
+                print("Liking failed:",error.localizedDescription)
+                return
+            }
+            completionBlock()
+        }
+    }
+    
+    class func fetchIfUserLiked(thePostWith postId:String, completionBlock:@escaping (Bool) -> ()){
+        guard let loggedInUser = Auth.auth().currentUser else{ return }
+        let likePostRef = Database.database().reference().child("likes").child(postId).child(loggedInUser.uid)
+        likePostRef.observeSingleEvent(of: .value) { (snapshot) in
+            guard let likedInt = snapshot.value as? Int, likedInt == 1 else {
+                completionBlock(false)
+                return
+            }
+            completionBlock(true)
         }
     }
     

@@ -9,21 +9,25 @@
 import UIKit
 import Firebase
 
-class UserProfileController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
+class UserProfileController: UICollectionViewController, UICollectionViewDelegateFlowLayout, UserProfileHeaderDelegate {
     
     let headerId = "headerId"
-    let cellId = "cellId"
+    let gridCellId = "gridCellId"
+    let listCellId = "listCellId"
     
     var selectedUser:User?
     var user:User?
     var posts = [Post]()
+    
+    var isGridBeingShown = true
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         collectionView.backgroundColor = .white
         collectionView.register(UserProfileHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerId)
-        collectionView.register(UserProfileCell.self, forCellWithReuseIdentifier: cellId)
+        collectionView.register(UserProfileCell.self, forCellWithReuseIdentifier: gridCellId)
+        collectionView.register(HomePostCell.self, forCellWithReuseIdentifier: listCellId)
         
         setupLogoutNavButton()
         
@@ -74,7 +78,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
     
     func fetchPosts(of user:User){
         self.posts.removeAll(keepingCapacity: false)
-        Service.fetchPostsChildAdded(of: user.uid, completion: { (post) in
+        Service.fetchPostsChildAdded(of: user, completion: { (post) in
             self.posts.insert(post, at: 0)
             self.user?.postsCount += 1
             DispatchQueue.main.async {
@@ -85,6 +89,16 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
     
     func setupLogoutNavButton(){
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "gear").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(handleLogout))
+    }
+    
+    func didSwitchToGrid() {
+        isGridBeingShown = true
+        collectionView.reloadData()
+    }
+    
+    func didSwitchToList() {
+        isGridBeingShown = false
+        collectionView.reloadData()
     }
     
     @objc func handleLogout(){
@@ -110,14 +124,21 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! UserProfileCell
-        cell.post = posts[indexPath.item]
-        return cell
+        if isGridBeingShown{
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: gridCellId, for: indexPath) as! UserProfileCell
+            cell.post = posts[indexPath.item]
+            return cell
+        }else{
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: listCellId, for: indexPath) as! HomePostCell
+            cell.post = posts[indexPath.item]
+            return cell
+        }
     }
     
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: headerId, for: indexPath) as! UserProfileHeader
         header.user = self.user
+        header.headerDelegate = self
         return header
     }
     
@@ -130,8 +151,13 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width = view.frame.width / 3 - 0.66666667
-        return CGSize(width: width, height: width)
+        if isGridBeingShown{
+            let width = view.frame.width / 3 - 0.66666667
+            return CGSize(width: width, height: width)
+        }else{
+            let height = view.frame.width + 166
+            return CGSize(width: view.frame.width, height: height)
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
