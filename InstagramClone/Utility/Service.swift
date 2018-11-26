@@ -47,7 +47,10 @@ class Service: NSObject {
     class func fetchPostsChildAdded(of userId:String, completion: @escaping (Post) -> ()){
         let reference = Database.database().reference().child("posts").child(userId)
         reference.queryOrdered(byChild: "creationDate").observe(.childAdded) { (snapshot) in
-            let post = Post(snapshot: snapshot)
+            guard var valuesDict = snapshot.value as? [String:Any] else { return }
+            let postId = snapshot.key
+            valuesDict["postId"] = postId
+            let post = Post(with: valuesDict)
             completion(post)
         }
     }
@@ -60,12 +63,42 @@ class Service: NSObject {
                 var posts = [Post]()
                 valuesDict.forEach({ (key, postValues) in
                     guard var values = postValues as? [String:Any] else{ return }
+                    values["postId"] = key
                     values["user"] = user
                     let post = Post(with: values)
                     posts.append(post)
                 })
                 completion(posts)
             }
+        }
+    }
+    
+    class func fetchComments(of post:Post, completionBlock:@escaping ([Comment]) -> ()){
+        let commentsRef = Database.database().reference().child("comments").child(post.postId)
+        commentsRef.observeSingleEvent(of: .value) { (snapshot) in
+            guard let valuesDict = snapshot.value as? [String:Any] else { return }
+            var comments = [Comment]()
+            valuesDict.forEach({ (key,value) in
+                guard let values = value as? [String:Any] else { return }
+                let comment = Comment(with: values)
+                comments.append(comment)
+            })
+            completionBlock(comments)
+        }
+    }
+    
+    class func makeComment(withText body:String, to post:Post, completionBlock:@escaping () -> ()){
+        let newCommentRef = Database.database().reference().child("comments").child(post.postId).childByAutoId()
+        guard let uid = Auth.auth().currentUser?.uid else{ return }
+        let timestamp = Int(Date().timeIntervalSince1970)
+        let values = ["userId": uid, "timestamp":"\(timestamp)", "body": body] as [String : Any]
+        newCommentRef.updateChildValues(values) { (error, ref) in
+            if let error = error{
+                print("Error occured while inserting comment:",error.localizedDescription)
+                return
+            }
+            print("Comment posted successfully")
+            completionBlock()
         }
     }
     

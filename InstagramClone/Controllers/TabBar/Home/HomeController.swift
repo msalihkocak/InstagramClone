@@ -9,7 +9,7 @@
 import UIKit
 import Firebase
 
-class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
+class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLayout, HomePostCellDelegate {
     
     let cellId = "cellId"
     var posts = [Post]()
@@ -68,6 +68,13 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "camera3").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(handleCameraTapped))
     }
     
+    func didTapComment(of post:Post) {
+        let commentController = CommentController()
+        commentController.post = post
+//        commentController.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(commentController, animated: true)
+    }
+    
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return posts.count
     }
@@ -75,6 +82,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! HomePostCell
         cell.post = posts[indexPath.item]
+        cell.delegate = self
         return cell
     }
     

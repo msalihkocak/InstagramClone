@@ -17,6 +17,7 @@ extension UIColor{
     static let seperator = UIColor.rgb(235, 235, 235)
     static let mainBlue = UIColor.rgb(0, 122, 175)
     static let buttonBlue = UIColor.rgb(17, 154, 237)
+    static let gridCell = UIColor.rgb(245, 245, 245)
 }
 
 struct NotificationName {
@@ -122,5 +123,17 @@ extension Date {
         }
         
         return "\(secondsAgo / week) weeks ago"
+    }
+}
+
+extension UITabBarController {
+    func hideTabBarAnimated(hide:Bool) {
+        UIView.animate(withDuration: 0.3, animations: {
+            if hide {
+                self.tabBar.transform = CGAffineTransform(translationX: 0, y: 50)
+            } else {
+                self.tabBar.transform = CGAffineTransform.identity
+            }
+        })
     }
 }

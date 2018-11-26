@@ -14,7 +14,7 @@ class Utility: NSObject {
         let textsOfTextFields = textFields.compactMap({return $0.text})
         var isFormValid = true
         textsOfTextFields.forEach { (text) in
-            if text.count < 1{
+            if text.isEmpty{
                 isFormValid = false
                 return
             }

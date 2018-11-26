@@ -11,6 +11,7 @@ import Firebase
 
 struct Post {
     
+    var postId:String
     var captionText:String
     var imageUrl:String
     var timestamp:String
@@ -25,6 +26,7 @@ struct Post {
         imageWidth = ""
         imageHeight = ""
         user = User()
+        postId = ""
     }
     
     init(snapshot:DataSnapshot) {
@@ -42,5 +44,6 @@ struct Post {
         self.imageWidth = values["imageWidth"] as? String ?? ""
         self.imageHeight = values["imageHeight"] as? String ?? ""
         self.user = values["user"] as? User ?? User()
+        self.postId = values["postId"] as? String ?? ""
     }
 }

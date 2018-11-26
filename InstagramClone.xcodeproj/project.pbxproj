@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		49153F5A21ABD818003D2E15 /* CommentController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49153F5921ABD818003D2E15 /* CommentController.swift */; };
+		49153F5C21AC0B61003D2E15 /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49153F5B21AC0B61003D2E15 /* Comment.swift */; };
+		49153F5E21AC0BDD003D2E15 /* CommentCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49153F5D21AC0BDD003D2E15 /* CommentCell.swift */; };
 		4933EFD321A82C59001027D7 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4933EFD221A82C59001027D7 /* LoginViewController.swift */; };
 		4933EFD521A83874001027D7 /* Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4933EFD421A83874001027D7 /* Utility.swift */; };
 		49882A8121A5780E009457D4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49882A8021A5780E009457D4 /* AppDelegate.swift */; };
@@ -38,6 +41,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		49153F5921ABD818003D2E15 /* CommentController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentController.swift; sourceTree = "<group>"; };
+		49153F5B21AC0B61003D2E15 /* Comment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comment.swift; sourceTree = "<group>"; };
+		49153F5D21AC0BDD003D2E15 /* CommentCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentCell.swift; sourceTree = "<group>"; };
 		4933EFD221A82C59001027D7 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		4933EFD421A83874001027D7 /* Utility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utility.swift; sourceTree = "<group>"; };
 		49882A7D21A5780E009457D4 /* InstagramClone.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InstagramClone.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -166,6 +172,7 @@
 				49882A9821A5F001009457D4 /* Extensions.swift */,
 				49882AA621A71018009457D4 /* Service.swift */,
 				4933EFD421A83874001027D7 /* Utility.swift */,
+				9D4CB0CB21AB1FC2004CA660 /* SKAnimationPresenter.swift */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -175,6 +182,7 @@
 			children = (
 				49882AA121A6F1AE009457D4 /* User.swift */,
 				9D8F905D21A94069004765E1 /* Post.swift */,
+				49153F5B21AC0B61003D2E15 /* Comment.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -182,12 +190,14 @@
 		49882AA321A6F86A009457D4 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				9D4CB0C921AB0132004CA660 /* PreviewImageContainerView.swift */,
 				49882AA421A6F87D009457D4 /* UserProfileHeader.swift */,
 				9D8F905721A8A50C004765E1 /* AddPhotoCell.swift */,
 				9D8F905921A8A695004765E1 /* AddPhotoHeader.swift */,
 				9D8F905F21A94DFB004765E1 /* UserProfileCell.swift */,
 				9D8F906121A99734004765E1 /* HomePostCell.swift */,
 				9D4CB0C521A9FA8E004CA660 /* UserSearchCell.swift */,
+				49153F5D21AC0BDD003D2E15 /* CommentCell.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -219,8 +229,7 @@
 			children = (
 				9D4CB0C721AAE93F004CA660 /* CameraController.swift */,
 				9D8F905221A87ECE004765E1 /* HomeController.swift */,
-				9D4CB0C921AB0132004CA660 /* PreviewImageContainerView.swift */,
-				9D4CB0CB21AB1FC2004CA660 /* SKAnimationPresenter.swift */,
+				49153F5921ABD818003D2E15 /* CommentController.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -379,8 +388,10 @@
 				49882A9921A5F001009457D4 /* Extensions.swift in Sources */,
 				9D8F905821A8A50C004765E1 /* AddPhotoCell.swift in Sources */,
 				9D8F905321A87ECE004765E1 /* HomeController.swift in Sources */,
+				49153F5A21ABD818003D2E15 /* CommentController.swift in Sources */,
 				9D4CB0CC21AB1FC2004CA660 /* SKAnimationPresenter.swift in Sources */,
 				9D4CB0CA21AB0132004CA660 /* PreviewImageContainerView.swift in Sources */,
+				49153F5E21AC0BDD003D2E15 /* CommentCell.swift in Sources */,
 				49882AA221A6F1AE009457D4 /* User.swift in Sources */,
 				9D8F905621A8919B004765E1 /* AddPhotoController.swift in Sources */,
 				9D8F905C21A92C59004765E1 /* SharePhotoController.swift in Sources */,
@@ -388,6 +399,7 @@
 				9D8F905A21A8A695004765E1 /* AddPhotoHeader.swift in Sources */,
 				49882A9D21A6EBB1009457D4 /* MainTabBarController.swift in Sources */,
 				49882A9F21A6EBE1009457D4 /* UserProfileController.swift in Sources */,
+				49153F5C21AC0B61003D2E15 /* Comment.swift in Sources */,
 				9D8F905E21A94069004765E1 /* Post.swift in Sources */,
 				49882A8121A5780E009457D4 /* AppDelegate.swift in Sources */,
 				9D4CB0C621A9FA8E004CA660 /* UserSearchCell.swift in Sources */,
