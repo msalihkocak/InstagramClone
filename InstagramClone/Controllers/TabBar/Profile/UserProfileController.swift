@@ -36,20 +36,27 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+        cursor = nil
+        isFirstTimeCallback = true
+        isFirstTime = true
+        isPagingFinished = false
         fetchOrGetUser()
     }
     
     func fetchOrGetUser(){
-        if selectedUser != nil{
-            user = selectedUser!
-            self.navigationItem.rightBarButtonItem = nil
-            self.configureUI()
-        }else{
-            Service.fetchCurrentUser { (user) in
-                self.user = user
+        if user == nil{
+            if selectedUser != nil{
+                user = selectedUser!
+                self.navigationItem.rightBarButtonItem = nil
                 self.configureUI()
+            }else{
+                Service.fetchCurrentUser { (user) in
+                    self.user = user
+                    self.configureUI()
+                }
             }
+        }else{
+            self.configureUI()
         }
     }
     
@@ -57,7 +64,9 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         guard let user = user else{ return }
         self.navigationItem.title = user.username
         fetchFollowersAndFollowings(of: user)
-        fetchPosts(of: user)
+//        fetchPosts(of: user)
+        self.posts.removeAll(keepingCapacity: false)
+        fetchPostsPaginated(of: user)
     }
     
     func fetchFollowersAndFollowings(of user:User){
@@ -87,6 +96,43 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         })
     }
     
+    var cursor: String?
+    var isFirstTime = true
+    var isFirstTimeCallback = true
+    var isPagingFinished = false
+    
+    func fetchPostsPaginated(of user:User){
+        var limitedOrderedPostsOfUser = Database.database().reference().child("posts").child(user.uid).queryOrdered(byChild: "timestamp").queryLimited(toLast: 4)
+        if !isFirstTime{
+            limitedOrderedPostsOfUser = limitedOrderedPostsOfUser.queryEnding(atValue: cursor)
+        }else{
+            isFirstTime = false
+        }
+        limitedOrderedPostsOfUser.observeSingleEvent(of: .value) { (snapshot) in
+            guard var childSnapshots = snapshot.children.allObjects as? [DataSnapshot] else{ return }
+            guard let values = childSnapshots.first?.value as? [String:Any] else { return }
+            guard let cursorTimestamp = values["timestamp"] as? String else{ return }
+            self.cursor = cursorTimestamp
+            if !self.isFirstTimeCallback{
+                childSnapshots.removeLast()
+            }else{
+                self.isFirstTimeCallback = false
+            }
+            self.isPagingFinished = childSnapshots.count == 0 ? true : false
+            childSnapshots.reverse()
+            childSnapshots.forEach({ (snapshot) in
+                guard var values = snapshot.value as? [String:Any] else{ return }
+                values["postId"] = snapshot.key
+                values["user"] = user
+                let post = Post(with: values)
+                self.posts.append(post)
+            })
+            DispatchQueue.main.async {
+                self.collectionView.reloadData()
+            }
+        }
+    }
+    
     func setupLogoutNavButton(){
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "gear").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(handleLogout))
     }
@@ -102,9 +148,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
     }
     
     @objc func handleLogout(){
-        
         let controller = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        
         controller.addAction(UIAlertAction(title: "Log out", style: .destructive) { (action) in
             do{
                 try Auth.auth().signOut()
@@ -124,6 +168,11 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        if indexPath.row == posts.count - 1 && !isPagingFinished{
+            if let user = self.user{
+                fetchPostsPaginated(of: user)
+            }
+        }
         if isGridBeingShown{
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: gridCellId, for: indexPath) as! UserProfileCell
             cell.post = posts[indexPath.item]
