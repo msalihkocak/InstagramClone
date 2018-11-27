@@ -8,9 +8,10 @@
 
 import UIKit
 import Firebase
+import UserNotifications
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate, UNUserNotificationCenterDelegate {
 
     var window: UIWindow?
 
@@ -25,7 +26,57 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let tabbarController = MainTabBarContorller()
         window?.rootViewController = tabbarController
         
+        attempToRegisterForPushNotifications(with: application)
+        
         return true
+    }
+    
+    func attempToRegisterForPushNotifications(with application:UIApplication){
+        
+        Messaging.messaging().delegate = self
+        UNUserNotificationCenter.current().delegate = self
+        
+        let options = UNAuthorizationOptions(arrayLiteral: [.alert, .badge, .sound])
+        UNUserNotificationCenter.current().requestAuthorization(options: options) { (granted, error) in
+            if let error = error{
+                print("Failed to request authorization", error.localizedDescription)
+                return
+            }
+            if granted{
+                print("Authorization granted")
+            }else{
+                print("Authorization denied")
+            }
+        }
+        application.registerForRemoteNotifications()
+    }
+    
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        print("Registered for notifications with token:", deviceToken)
+    }
+    
+    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String) {
+        print("Registered with fcm token:", fcmToken)
+    }
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler(.alert)
+    }
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        let userInfo = response.notification.request.content.userInfo
+        if let followerId = userInfo["followerId"] as? String{
+            print("Follower ID: \(followerId)")
+            
+            let userController = UserProfileController(collectionViewLayout:UICollectionViewFlowLayout())
+            userController.notificationUserId = followerId
+            guard let tabBarController = self.window?.rootViewController as? MainTabBarContorller else{ return }
+            tabBarController.selectedIndex = 0
+            tabBarController.presentedViewController?.dismiss(animated: true, completion: nil)
+            
+            guard let homeNavController = tabBarController.viewControllers?.first as? UINavigationController else{ return }
+            homeNavController.pushViewController(userController, animated: true)
+        }
     }
 
     func applicationWillResignActive(_ application: UIApplication) {

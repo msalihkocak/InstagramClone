@@ -124,11 +124,12 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
                 //Getting the download url
                 storageRef.downloadURL(completion: { (url, err) in
                     if let error = err{
-                        print("Upload image failed", error.localizedDescription)
+                        print("Image download url retrieval failed:", error.localizedDescription)
                         return
                     }
                     guard let downloadUrlString = url?.absoluteString else { return }
-                    let userValues = ["username": username, "email":email, "imageUrl": downloadUrlString]
+                    guard let fcmToken = Messaging.messaging().fcmToken else { return }
+                    let userValues = ["username": username, "email":email, "imageUrl": downloadUrlString, "fcmToken":fcmToken]
                     let values = [id:userValues]
                     Service.insertUserToDatabase(values: values, completionBlock: { (error) in
                         if let err = error{

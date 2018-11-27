@@ -89,6 +89,7 @@ class UserProfileHeader: UICollectionViewCell {
     
     let profileImageView: SKImageView = {
         let iv = SKImageView()
+        iv.contentMode = .scaleAspectFill
         iv.layer.cornerRadius = 40
         iv.clipsToBounds = true
         return iv

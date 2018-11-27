@@ -17,6 +17,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
     
     var selectedUser:User?
     var user:User?
+    var notificationUserId:String?
     var posts = [Post]()
     
     var isGridBeingShown = true
@@ -50,9 +51,16 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
                 self.navigationItem.rightBarButtonItem = nil
                 self.configureUI()
             }else{
-                Service.fetchCurrentUser { (user) in
-                    self.user = user
-                    self.configureUI()
+                if let userId = notificationUserId{
+                    Service.fetchUser(with: userId) { (user) in
+                        self.user = user
+                        self.configureUI()
+                    }
+                }else{
+                    Service.fetchCurrentUser { (user) in
+                        self.user = user
+                        self.configureUI()
+                    }
                 }
             }
         }else{
