@@ -14,8 +14,10 @@ class CommentCell: UITableViewCell {
         didSet{
             guard let comment = self.comment else{ return }
             Service.fetchUser(with: comment.userId) { (user) in
-                self.profileImageView.loadImage(with: user.imageUrl)
-                self.setupLabelText(with: comment, and: user)
+                if user.uid == comment.userId{
+                    self.profileImageView.loadImage(with: user.imageUrl)
+                    self.setupLabelText(with: comment, and: user)
+                }
             }
             self.setupLabelText(with: comment, and: nil)
         }

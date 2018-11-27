@@ -38,6 +38,8 @@
 		9D8F905E21A94069004765E1 /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D8F905D21A94069004765E1 /* Post.swift */; };
 		9D8F906021A94DFB004765E1 /* UserProfileCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D8F905F21A94DFB004765E1 /* UserProfileCell.swift */; };
 		9D8F906221A99734004765E1 /* HomePostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D8F906121A99734004765E1 /* HomePostCell.swift */; };
+		9DF52C2C21ADC45800FEF635 /* SKInputContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DF52C2B21ADC45800FEF635 /* SKInputContainerView.swift */; };
+		9DF52C2E21ADD83E00FEF635 /* SKTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DF52C2D21ADD83E00FEF635 /* SKTextView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -75,6 +77,8 @@
 		9D8F905D21A94069004765E1 /* Post.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
 		9D8F905F21A94DFB004765E1 /* UserProfileCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileCell.swift; sourceTree = "<group>"; };
 		9D8F906121A99734004765E1 /* HomePostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePostCell.swift; sourceTree = "<group>"; };
+		9DF52C2B21ADC45800FEF635 /* SKInputContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SKInputContainerView.swift; sourceTree = "<group>"; };
+		9DF52C2D21ADD83E00FEF635 /* SKTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SKTextView.swift; sourceTree = "<group>"; };
 		D9320A9F3354507AFDE243B4 /* Pods-InstagramClone.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-InstagramClone.debug.xcconfig"; path = "Pods/Target Support Files/Pods-InstagramClone/Pods-InstagramClone.debug.xcconfig"; sourceTree = "<group>"; };
 		F544664B4E58C7A1F9CDD3AB /* Pods-InstagramClone.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-InstagramClone.release.xcconfig"; path = "Pods/Target Support Files/Pods-InstagramClone/Pods-InstagramClone.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -200,6 +204,8 @@
 				9D8F906121A99734004765E1 /* HomePostCell.swift */,
 				9D4CB0C521A9FA8E004CA660 /* UserSearchCell.swift */,
 				49153F5D21AC0BDD003D2E15 /* CommentCell.swift */,
+				9DF52C2B21ADC45800FEF635 /* SKInputContainerView.swift */,
+				9DF52C2D21ADD83E00FEF635 /* SKTextView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -402,12 +408,14 @@
 				9D4CB0CA21AB0132004CA660 /* PreviewImageContainerView.swift in Sources */,
 				49153F5E21AC0BDD003D2E15 /* CommentCell.swift in Sources */,
 				49882AA221A6F1AE009457D4 /* User.swift in Sources */,
+				9DF52C2E21ADD83E00FEF635 /* SKTextView.swift in Sources */,
 				9D8F905621A8919B004765E1 /* AddPhotoController.swift in Sources */,
 				9D8F905C21A92C59004765E1 /* SharePhotoController.swift in Sources */,
 				9D8F905121A87EC5004765E1 /* SearchController.swift in Sources */,
 				9D8F905A21A8A695004765E1 /* AddPhotoHeader.swift in Sources */,
 				49882A9D21A6EBB1009457D4 /* MainTabBarController.swift in Sources */,
 				49882A9F21A6EBE1009457D4 /* UserProfileController.swift in Sources */,
+				9DF52C2C21ADC45800FEF635 /* SKInputContainerView.swift in Sources */,
 				49153F5C21AC0B61003D2E15 /* Comment.swift in Sources */,
 				9D8F905E21A94069004765E1 /* Post.swift in Sources */,
 				49882A8121A5780E009457D4 /* AppDelegate.swift in Sources */,
