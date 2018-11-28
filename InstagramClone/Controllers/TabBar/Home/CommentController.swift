@@ -8,29 +8,58 @@
 
 import UIKit
 
-class CommentController: UITableViewController {
+class CommentController: UITableViewController, SKInputContainerViewDelegate {
     
     var post:Post?
     var comments = [Comment]()
     
     let cellId = "cellId"
     
+    lazy var containerView: SKInputContainerView = {
+        let view = SKInputContainerView(frame: CGRect(x: 0, y: 0, width: self.view.frame.width, height: 50))
+        view.backgroundColor = .white
+        view.delegate = self
+        return view
+    }()
+    
+    override var inputAccessoryView: UIView?{
+        get{
+            return containerView
+        }
+    }
+    
+    override var canBecomeFirstResponder: Bool{
+        return true
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        navigationController?.navigationBar.tintColor = .black
+        navigationItem.title = "Comments"
         
+        setupTableView()
+        
+        fetchComments()
+    }
+    
+    func setupTableView(){
         tableView.backgroundColor = .white
         tableView.keyboardDismissMode = .interactive
         tableView.separatorStyle = .none
         tableView.allowsSelection = false
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 44
-        
-        navigationController?.navigationBar.tintColor = .black
-        self.navigationItem.title = "Comments"
-        
         tableView.register(CommentCell.self, forCellReuseIdentifier: cellId)
-        
-        fetchComments()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        tabBarController?.hideTabBarAnimated(hide: true)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        tabBarController?.hideTabBarAnimated(hide: false)
     }
     
     func fetchComments(){
@@ -47,52 +76,6 @@ class CommentController: UITableViewController {
         }
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        tabBarController?.hideTabBarAnimated(hide: true)
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        tabBarController?.hideTabBarAnimated(hide: false)
-    }
-    
-    lazy var containerView:UIView = {
-        let view = UIView()
-        view.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 50)
-        view.backgroundColor = .white
-        
-        let sendButton = UIButton(type: .system)
-        sendButton.tintColor = .buttonBlue
-        sendButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
-        sendButton.setTitle("Submit", for: .normal)
-        sendButton.addTarget(self, action: #selector(handleSubmit), for: .touchUpInside)
-        view.addSubview(sendButton)
-        sendButton.anchor(top: view.topAnchor, left: nil, bottom: view.bottomAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 8, width: 0, height: 0)
-        sendButton.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.15).isActive = true
-        
-        
-        view.addSubview(commentTextField)
-        commentTextField.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: sendButton.leftAnchor, paddingTop: 0, paddingLeft: 20, paddingBottom: 0, paddingRight: 8, width: 0, height: 0)
-        
-        return view
-    }()
-    
-    let commentTextField:UITextField = {
-        let textField = UITextField()
-        textField.placeholder = "Enter comment.."
-        return textField
-    }()
-    
-    override var inputAccessoryView: UIView?{
-        get{
-            return containerView
-        }
-    }
-    
-    override var canBecomeFirstResponder: Bool{
-        return true
-    }
-    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return comments.count
     }
@@ -103,22 +86,11 @@ class CommentController: UITableViewController {
         return cell
     }
     
-    @objc func handleSubmit(){
+    func didTapSubmit(with text: String) {
         guard let post = self.post else{ return }
-        Utility.validate([commentTextField]) { (isValid) in
-            if isValid{
-                guard let text = self.commentTextField.text else{ return }
-                Service.makeComment(withText: text, to: post, completionBlock: {
-                    self.fetchComments()
-                })
-                self.resetUI()
-            }
-        }
-    }
-    
-    func resetUI(){
-        commentTextField.text = ""
-        commentTextField.resignFirstResponder()
+        Service.makeComment(withText: text, to: post, completionBlock: {
+            self.fetchComments()
+        })
     }
     
     @objc func handleBack(){
