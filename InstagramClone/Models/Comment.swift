@@ -11,13 +11,13 @@ import Firebase
 
 struct Comment {
     
-    let userId:String
+    let user:User
     let body:String
     let timestamp:String
     
     init() {
         body = ""
-        userId = ""
+        user = User()
         timestamp = ""
     }
     
@@ -31,7 +31,7 @@ struct Comment {
     
     init(with values:[String:Any]) {
         self.body = values["body"] as? String ?? ""
-        self.userId = values["userId"] as? String ?? ""
+        self.user = values["user"] as? User ?? User()
         self.timestamp = values["timestamp"] as? String ?? ""
     }
 }

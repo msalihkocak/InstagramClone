@@ -35,9 +35,9 @@ class CommentController: UITableViewController {
     
     func fetchComments(){
         guard let post = self.post else{ return }
-        Service.fetchComments(of: post) { (comments) in
-            self.comments.removeAll(keepingCapacity: false)
-            self.comments.append(contentsOf: comments)
+        self.comments.removeAll(keepingCapacity: false)
+        Service.fetchComments(of: post) { (comment) in
+            self.comments.append(comment)
             self.comments.sort(by: {$0.timestamp < $1.timestamp})
             DispatchQueue.main.async {
                 self.tableView.reloadData()

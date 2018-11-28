@@ -75,17 +75,20 @@ class Service: NSObject {
         }
     }
     
-    class func fetchComments(of post:Post, completionBlock:@escaping ([Comment]) -> ()){
+    class func fetchComments(of post:Post, completionBlock:@escaping (Comment) -> ()){
         let commentsRef = Database.database().reference().child("comments").child(post.postId)
         commentsRef.observeSingleEvent(of: .value) { (snapshot) in
             guard let valuesDict = snapshot.value as? [String:Any] else { return }
-            var comments = [Comment]()
-            valuesDict.forEach({ (key,value) in
-                guard let values = value as? [String:Any] else { return }
-                let comment = Comment(with: values)
-                comments.append(comment)
+            valuesDict.forEach({ (commentKey, commentValues) in
+                guard var values = commentValues as? [String:Any] else { return }
+                guard let userId = values["userId"] as? String else{ return }
+                Service.fetchUser(with: userId) { (user) in
+                    values["user"] = user
+                    let comment = Comment(with: values)
+                    completionBlock(comment)
+                }
+                
             })
-            completionBlock(comments)
         }
     }
     
