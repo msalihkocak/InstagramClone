@@ -9,7 +9,7 @@
 import UIKit
 import Firebase
 
-class UserProfileController: UICollectionViewController, UICollectionViewDelegateFlowLayout, UserProfileHeaderDelegate {
+class UserProfileController: UICollectionViewController, UICollectionViewDelegateFlowLayout, UserProfileHeaderDelegate, HomePostCellDelegate {
     
     let headerId = "headerId"
     let gridCellId = "gridCellId"
@@ -160,9 +160,12 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         controller.addAction(UIAlertAction(title: "Log out", style: .destructive) { (action) in
             do{
                 try Auth.auth().signOut()
-                let loginController = LoginController()
-                let navController = UINavigationController(rootViewController: loginController)
-                self.present(navController, animated: true, completion: nil)
+                guard let user = self.user else{ return }
+                Service.removeFcmTokenOfUser(with: user.uid, completionBlock: {
+                    let loginController = LoginController()
+                    let navController = UINavigationController(rootViewController: loginController)
+                    self.present(navController, animated: true, completion: nil)
+                })
             }catch let error{
                 print("Failed to sign out", error.localizedDescription)
             }
@@ -188,6 +191,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         }else{
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: listCellId, for: indexPath) as! HomePostCell
             cell.post = posts[indexPath.item]
+            cell.delegate = self
             return cell
         }
     }
@@ -219,5 +223,22 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         return CGSize(width: view.frame.width, height: 200)
+    }
+    
+    func didTapComment(of post:Post) {
+        let commentController = CommentController()
+        commentController.post = post
+        navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+        navigationController?.pushViewController(commentController, animated: true)
+    }
+    
+    func didLikePost(at cell: HomePostCell) {
+        // Perform like on post and wait for the result to animate like button
+        guard let indexPath = collectionView.indexPath(for: cell) else{ return }
+        let postToBeLiked = posts[indexPath.row]
+        Service.like(postToBeLiked) {
+            self.posts[indexPath.row].hasLiked = !postToBeLiked.hasLiked
+            self.collectionView.reloadItems(at: [indexPath])
+        }
     }
 }

@@ -10,6 +10,9 @@
 		49153F5A21ABD818003D2E15 /* CommentController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49153F5921ABD818003D2E15 /* CommentController.swift */; };
 		49153F5C21AC0B61003D2E15 /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49153F5B21AC0B61003D2E15 /* Comment.swift */; };
 		49153F5E21AC0BDD003D2E15 /* CommentCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49153F5D21AC0BDD003D2E15 /* CommentCell.swift */; };
+		4917F23A21AECDB3008B775D /* SKActivityIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4917F23921AECDB3008B775D /* SKActivityIndicator.swift */; };
+		4917F23D21AECDF2008B775D /* SKImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4917F23C21AECDF2008B775D /* SKImageView.swift */; };
+		4917F23F21AEE014008B775D /* SKLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4917F23E21AEE014008B775D /* SKLabel.swift */; };
 		4933EFD321A82C59001027D7 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4933EFD221A82C59001027D7 /* LoginViewController.swift */; };
 		4933EFD521A83874001027D7 /* Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4933EFD421A83874001027D7 /* Utility.swift */; };
 		49882A8121A5780E009457D4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49882A8021A5780E009457D4 /* AppDelegate.swift */; };
@@ -47,6 +50,9 @@
 		49153F5B21AC0B61003D2E15 /* Comment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comment.swift; sourceTree = "<group>"; };
 		49153F5D21AC0BDD003D2E15 /* CommentCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentCell.swift; sourceTree = "<group>"; };
 		49153F5F21AD5383003D2E15 /* InstagramClone.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = InstagramClone.entitlements; sourceTree = "<group>"; };
+		4917F23921AECDB3008B775D /* SKActivityIndicator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SKActivityIndicator.swift; sourceTree = "<group>"; };
+		4917F23C21AECDF2008B775D /* SKImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SKImageView.swift; sourceTree = "<group>"; };
+		4917F23E21AEE014008B775D /* SKLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SKLabel.swift; sourceTree = "<group>"; };
 		4933EFD221A82C59001027D7 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		4933EFD421A83874001027D7 /* Utility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utility.swift; sourceTree = "<group>"; };
 		49882A7D21A5780E009457D4 /* InstagramClone.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InstagramClone.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -101,6 +107,19 @@
 				56EB8E6E10A732DEF5CF419D /* Pods_InstagramClone.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		4917F23B21AECDC4008B775D /* SKPack */ = {
+			isa = PBXGroup;
+			children = (
+				9DF52C2D21ADD83E00FEF635 /* SKTextView.swift */,
+				9DF52C2B21ADC45800FEF635 /* SKInputContainerView.swift */,
+				4917F23921AECDB3008B775D /* SKActivityIndicator.swift */,
+				9D4CB0CB21AB1FC2004CA660 /* SKAnimationPresenter.swift */,
+				4917F23C21AECDF2008B775D /* SKImageView.swift */,
+				4917F23E21AEE014008B775D /* SKLabel.swift */,
+			);
+			path = SKPack;
 			sourceTree = "<group>";
 		};
 		4933EFD021A82C27001027D7 /* Login-Register */ = {
@@ -175,10 +194,10 @@
 		49882A9621A5EFEB009457D4 /* Utility */ = {
 			isa = PBXGroup;
 			children = (
+				4917F23B21AECDC4008B775D /* SKPack */,
 				49882A9821A5F001009457D4 /* Extensions.swift */,
 				49882AA621A71018009457D4 /* Service.swift */,
 				4933EFD421A83874001027D7 /* Utility.swift */,
-				9D4CB0CB21AB1FC2004CA660 /* SKAnimationPresenter.swift */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -204,8 +223,6 @@
 				9D8F906121A99734004765E1 /* HomePostCell.swift */,
 				9D4CB0C521A9FA8E004CA660 /* UserSearchCell.swift */,
 				49153F5D21AC0BDD003D2E15 /* CommentCell.swift */,
-				9DF52C2B21ADC45800FEF635 /* SKInputContainerView.swift */,
-				9DF52C2D21ADD83E00FEF635 /* SKTextView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -398,8 +415,10 @@
 				9D8F906021A94DFB004765E1 /* UserProfileCell.swift in Sources */,
 				9D8F906221A99734004765E1 /* HomePostCell.swift in Sources */,
 				49882AA721A71018009457D4 /* Service.swift in Sources */,
+				4917F23F21AEE014008B775D /* SKLabel.swift in Sources */,
 				9D4CB0C821AAE93F004CA660 /* CameraController.swift in Sources */,
 				49882AA521A6F87D009457D4 /* UserProfileHeader.swift in Sources */,
+				4917F23A21AECDB3008B775D /* SKActivityIndicator.swift in Sources */,
 				49882A9921A5F001009457D4 /* Extensions.swift in Sources */,
 				9D8F905821A8A50C004765E1 /* AddPhotoCell.swift in Sources */,
 				9D8F905321A87ECE004765E1 /* HomeController.swift in Sources */,
@@ -417,6 +436,7 @@
 				49882A9F21A6EBE1009457D4 /* UserProfileController.swift in Sources */,
 				9DF52C2C21ADC45800FEF635 /* SKInputContainerView.swift in Sources */,
 				49153F5C21AC0B61003D2E15 /* Comment.swift in Sources */,
+				4917F23D21AECDF2008B775D /* SKImageView.swift in Sources */,
 				9D8F905E21A94069004765E1 /* Post.swift in Sources */,
 				49882A8121A5780E009457D4 /* AppDelegate.swift in Sources */,
 				9D4CB0C621A9FA8E004CA660 /* UserSearchCell.swift in Sources */,

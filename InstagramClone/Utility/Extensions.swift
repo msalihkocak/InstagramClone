@@ -26,6 +26,7 @@ struct NotificationName {
 
 struct TextAttributes {
     static let titleAttributes = [NSAttributedString.Key.font:UIFont.boldSystemFont(ofSize: 14)]
+    static let headerAttributes = [NSAttributedString.Key.font:UIFont.boldSystemFont(ofSize: 18)]
     static let captionAttributes = [NSAttributedString.Key.font:UIFont.systemFont(ofSize: 14)]
     static let timestampAttributes = [NSAttributedString.Key.foregroundColor:UIColor.gray,NSAttributedString.Key.font:UIFont.boldSystemFont(ofSize: 13)]
     static let gapAttributes = [NSAttributedString.Key.font:UIFont.boldSystemFont(ofSize: 4)]
@@ -62,44 +63,6 @@ extension UIView {
         if height != 0 {
             heightAnchor.constraint(equalToConstant: height).isActive = true
         }
-    }
-}
-
-
-var imageCache = [String:UIImage]()
-
-class SKImageView:UIImageView{
-    var lastURLUsedToLoadImage: String?
-    
-    func loadImage(with urlString:String){
-        lastURLUsedToLoadImage = urlString
-        
-        self.image = nil
-        
-        if let cachedImage = imageCache[urlString]{
-            self.image = cachedImage
-            return
-        }
-        
-        guard let url = URL(string: urlString) else{ return }
-        URLSession.shared.dataTask(with: url, completionHandler: { (data, response, error) in
-            if let err = error{
-                print("Error while getting profile image:", err.localizedDescription)
-                return
-            }
-            
-            if url.absoluteString != self.lastURLUsedToLoadImage{
-                return
-            }
-            
-            guard let data = data else{ return }
-            let image = UIImage(data: data)
-            imageCache[url.absoluteString] = image
-            
-            DispatchQueue.main.async {
-                self.image = image
-            }
-        }).resume()
     }
 }
 

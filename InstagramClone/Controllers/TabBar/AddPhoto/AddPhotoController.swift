@@ -42,6 +42,7 @@ class AddPhotoController: UICollectionViewController, UICollectionViewDelegateFl
     @objc func handleNext(){
         let sharePhotoController = SharePhotoController()
         sharePhotoController.imageToShare = self.selectedImage
+        navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
         navigationController?.pushViewController(sharePhotoController, animated: true)
     }
     

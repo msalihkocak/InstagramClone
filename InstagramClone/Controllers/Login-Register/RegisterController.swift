@@ -11,6 +11,8 @@ import Firebase
 
 class RegisterController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
+    let hud = SKActivityIndicator(isWithCancelButton: false, infoText: "Registering user...")
+    
     let plusPhotoButton: UIButton = {
         let button = UIButton(type: .system)
         button.imageView?.contentMode = .scaleAspectFill
@@ -105,6 +107,7 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
         guard let email = emailTextField.text, email.count > 0 else { return }
         guard let password = passwordTextField.text, password.count > 0 else { return }
         guard let username = usernameTextField.text, username.count > 0 else { return }
+        hud.startAnimating()
         Auth.auth().createUser(withEmail: email, password: password) { (result, error) in
             if let err = error{
                 print("Failed to create user:",err.localizedDescription)
@@ -132,6 +135,7 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
                     let userValues = ["username": username, "email":email, "imageUrl": downloadUrlString, "fcmToken":fcmToken]
                     let values = [id:userValues]
                     Service.insertUserToDatabase(values: values, completionBlock: { (error) in
+                        self.hud.stopAnimating()
                         if let err = error{
                             print("Error while writing user to database", err.localizedDescription)
                             return

@@ -41,15 +41,19 @@ class Utility: NSObject {
     
     class func animateButton(button:UIButton, withFlag flag:Bool){
         if flag {
+            DispatchQueue.main.async {
+                button.isEnabled = true
+            }
             Utility.animateEnable(of: button) {
                 button.backgroundColor = .buttonBlue
-                button.isEnabled = true
             }
             return
         }
+        DispatchQueue.main.async {
+            button.isEnabled = false
+        }
         Utility.animateEnable(of: button) {
             button.backgroundColor = .registerButton
-            button.isEnabled = false
         }
     }
     

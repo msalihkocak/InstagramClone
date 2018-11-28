@@ -14,10 +14,15 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     let cellId = "cellId"
     var posts = [Post]()
     
+    var isClearedDataSourceOnce = false
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         collectionView.backgroundColor = .white
         collectionView.register(HomePostCell.self, forCellWithReuseIdentifier: cellId)
+        
+        tabBarController?.tabBar.isTranslucent = false
+        navigationController?.navigationBar.isTranslucent = false
         
         NotificationCenter.default.addObserver(self, selector: #selector(handleRefreshControl), name: NotificationName.justPostedAPost, object: nil)
         
@@ -45,18 +50,24 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     
     func fetchPostsForHomeFeed(){
         guard let loggedInUserId = Auth.auth().currentUser?.uid else{ return }
+        isClearedDataSourceOnce = false
         Service.fetchFollowing(ofUserWith: loggedInUserId) { (followingIds) in
-            self.posts.removeAll(keepingCapacity: false)
             // Perfectly described :)
             var usersIdsWhichTheirPostsWillBeShownInHomeFeed = followingIds
             // We also want to see our posts as well
             usersIdsWhichTheirPostsWillBeShownInHomeFeed.append(loggedInUserId)
             usersIdsWhichTheirPostsWillBeShownInHomeFeed.forEach({ (userId) in
                 Service.fetchPostsValue(ofUserWith: userId) { (post) in
+                    if !self.isClearedDataSourceOnce {
+                        self.isClearedDataSourceOnce = true
+                        self.posts.removeAll(keepingCapacity: false)
+                    }
                     self.posts.append(post)
                     self.posts.sort(by: {$0.timestamp > $1.timestamp})
-                    self.collectionView.reloadData()
-                    self.collectionView.refreshControl?.endRefreshing()
+                    DispatchQueue.main.async {
+                        self.collectionView.reloadData()
+                        self.collectionView.refreshControl?.endRefreshing()
+                    }
                 }
             })
         }
@@ -71,6 +82,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     func didTapComment(of post:Post) {
         let commentController = CommentController()
         commentController.post = post
+        navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
         navigationController?.pushViewController(commentController, animated: true)
     }
     
@@ -85,12 +97,12 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     }
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return posts.count
+        return self.posts.count
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! HomePostCell
-        cell.post = posts[indexPath.item]
+        cell.post = self.posts[indexPath.item]
         cell.delegate = self
         return cell
     }

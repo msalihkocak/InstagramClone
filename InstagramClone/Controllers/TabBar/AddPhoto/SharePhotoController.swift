@@ -11,6 +11,8 @@ import Firebase
 
 class SharePhotoController: UIViewController, UITextViewDelegate {
     
+    let hud = SKActivityIndicator(isWithCancelButton: false, infoText: "Sharing post...")
+    
     let topShareView: UIView = {
         let view = UIView()
         view.backgroundColor = .white
@@ -58,6 +60,7 @@ class SharePhotoController: UIViewController, UITextViewDelegate {
         navigationItem.rightBarButtonItem?.isEnabled = false
         let filename = UUID().uuidString + ".jpg"
         let fileReference = Storage.storage().reference().child("shared-images").child(uid).child(filename)
+        hud.startAnimating()
         fileReference.putData(imageData, metadata: nil) { (metadata, error) in
             if let err = error{
                 self.navigationItem.rightBarButtonItem?.isEnabled = true
@@ -80,6 +83,7 @@ class SharePhotoController: UIViewController, UITextViewDelegate {
     fileprivate func savePost(with imageUrlString:String, size:CGSize){
         guard let text = self.captionTextView.text, text.count > 0 else{ return }
         Service.savePostToDatabase(withImageUrl: imageUrlString, andCaptionText: text, size: size, completionBlock: { (error) in
+            self.hud.stopAnimating()
             if let err = error{
                 print("Saving post to database failed:",err.localizedDescription)
                 return

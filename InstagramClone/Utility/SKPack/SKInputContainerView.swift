@@ -12,11 +12,11 @@ protocol SKInputContainerViewDelegate {
     func didTapSubmit(with text:String)
 }
 
-class SKInputContainerView: UIView {
+class SKInputContainerView: UIView, UITextViewDelegate {
     
     var delegate: SKInputContainerViewDelegate?
     
-    fileprivate lazy var sendButton: UIView = {
+    fileprivate lazy var sendButton: UIButton = {
         let button = UIButton(type: .system)
         button.tintColor = .buttonBlue
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
@@ -25,21 +25,22 @@ class SKInputContainerView: UIView {
         return button
     }()
     
-    fileprivate let commentTextView:SKTextView = {
+    fileprivate lazy var commentTextView:SKTextView = {
         let tv = SKTextView()
         tv.font = UIFont.systemFont(ofSize: 16)
         tv.isScrollEnabled = false
-//        textField.placeholder = "Enter comment.."
+        tv.delegate = self
         return tv
     }()
     
     override var intrinsicContentSize: CGSize{
-        if commentTextView.frame.height >= 150{
-            commentTextView.isScrollEnabled = true
+        if self.frame.height >= 150{
+//            commentTextView.isScrollEnabled = true
+            return CGSize(width: self.frame.width, height: 150)
         }else{
-            commentTextView.isScrollEnabled = false
+//            commentTextView.isScrollEnabled = false
+            return .zero
         }
-        return .zero
     }
     
     override init(frame: CGRect) {
@@ -52,10 +53,11 @@ class SKInputContainerView: UIView {
         sendButton.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.15).isActive = true
         
         addSubview(commentTextView)
-        commentTextView.anchor(top: topAnchor, left: leftAnchor, bottom: safeAreaLayoutGuide.bottomAnchor, right: sendButton.leftAnchor, paddingTop: 4, paddingLeft: 12, paddingBottom: 4, paddingRight: 8, width: 0, height: 0)
-        commentTextView.heightAnchor.constraint(lessThanOrEqualToConstant: 150).isActive = true
+        commentTextView.anchor(top: topAnchor, left: leftAnchor, bottom: safeAreaLayoutGuide.bottomAnchor, right: sendButton.leftAnchor, paddingTop: 8, paddingLeft: 12, paddingBottom: 8, paddingRight: 2, width: 0, height: 0)
+//        commentTextView.heightAnchor.constraint(lessThanOrEqualToConstant: 150).isActive = true
         
         setupSeperator()
+        textViewDidChange(commentTextView)
     }
     
     fileprivate func setupSeperator(){
@@ -73,6 +75,12 @@ class SKInputContainerView: UIView {
                 delegate?.didTapSubmit(with: text)
                 self.resetUI()
             }
+        }
+    }
+    
+    fileprivate func textViewDidChange(_ textView: UITextView) {
+        Utility.validate(commentTextView) { (isValid) in
+            self.sendButton.isEnabled = isValid
         }
     }
     

@@ -68,6 +68,7 @@ class PreviewImageContainerView: UIView {
                 savedLabel.frame = CGRect(x: 0, y: 0, width: 190, height: 60)
                 savedLabel.center = self.center
                 self.addSubview(savedLabel)
+                
                 savedLabel.layer.transform = CATransform3DMakeScale(0, 0, 0)
                 UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.5, options: .curveEaseOut, animations: {
                     savedLabel.layer.transform = CATransform3DMakeScale(1, 1, 1)

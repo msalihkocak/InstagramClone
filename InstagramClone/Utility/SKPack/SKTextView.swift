@@ -30,7 +30,7 @@ class SKTextView: UITextView {
         placeholderLabel.anchor(top: topAnchor, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, paddingTop: 8, paddingLeft: 8, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
     }
     
-    @objc func handleTextChange() {
+    @objc fileprivate func handleTextChange() {
         placeholderLabel.isHidden = !self.text.isEmpty
     }
     

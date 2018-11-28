@@ -30,6 +30,7 @@ class SearchController: UICollectionViewController, UICollectionViewDelegateFlow
         collectionView.alwaysBounceVertical = true
         collectionView.keyboardDismissMode = .onDrag
         
+        navigationController?.navigationBar.tintColor = .black
         navigationController?.navigationBar.addSubview(searchBar)
         
         guard let navBar = navigationController?.navigationBar else{ return }
@@ -49,6 +50,10 @@ class SearchController: UICollectionViewController, UICollectionViewDelegateFlow
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         searchBar.isHidden = false
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        collectionView.refreshControl?.endRefreshing()
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
@@ -82,6 +87,7 @@ class SearchController: UICollectionViewController, UICollectionViewDelegateFlow
         
         let userProfileController = UserProfileController(collectionViewLayout: UICollectionViewFlowLayout())
         userProfileController.selectedUser = user
+        navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
         navigationController?.pushViewController(userProfileController, animated: true)
     }
     

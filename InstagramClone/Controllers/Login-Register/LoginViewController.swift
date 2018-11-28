@@ -11,6 +11,8 @@ import Firebase
 
 class LoginController: UIViewController {
     
+    let hud = SKActivityIndicator(isWithCancelButton: false, infoText: "Logging in...")
+    
     let logoView: UIView = {
         let view = UIView()
         view.backgroundColor = .mainBlue
@@ -109,15 +111,19 @@ class LoginController: UIViewController {
     @objc func handleLogin(){
         guard let email = emailTextField.text, email.count > 0 else { return }
         guard let password = passwordTextField.text, password.count > 0 else { return }
+        hud.startAnimating()
         Auth.auth().signIn(withEmail: email, password: password) { (result, error) in
             if let err = error{
                 print("Sign in failed:", err.localizedDescription)
                 return
             }
-            print("Successfully logged in", result?.user ?? "")
-            guard let tabbarController = Utility.getMainTabbarController() else{ return }
-            tabbarController.setupViewControllers()
-            self.dismiss(animated: true, completion: nil)
+            guard let uid = result?.user.uid else{ return }
+            Service.addFcmTokenToUser(with: uid, completionBlock: {
+                self.hud.stopAnimating()
+                guard let tabbarController = Utility.getMainTabbarController() else{ return }
+                tabbarController.setupViewControllers()
+                self.dismiss(animated: true, completion: nil)
+            })
         }
     }
     
@@ -129,6 +135,7 @@ class LoginController: UIViewController {
     
     @objc func handleGoToRegister(){
         let registerController = RegisterController()
+        navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
         navigationController?.pushViewController(registerController, animated: true)
     }
     

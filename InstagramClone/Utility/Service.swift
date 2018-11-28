@@ -92,6 +92,29 @@ class Service: NSObject {
         }
     }
     
+    class func removeFcmTokenOfUser(with id:String, completionBlock:@escaping () -> ()){
+        let values = ["fcmToken": ""]
+        Database.database().reference().child("users").child(id).updateChildValues(values) { (error, ref) in
+            if let error = error{
+                print("Removal of token failed with error:", error.localizedDescription)
+                return
+            }
+            completionBlock()
+        }
+    }
+    
+    class func addFcmTokenToUser(with id:String, completionBlock:@escaping () -> ()){
+        guard let token = Messaging.messaging().fcmToken else { return }
+        let values = ["fcmToken": token]
+        Database.database().reference().child("users").child(id).updateChildValues(values) { (error, ref) in
+            if let error = error{
+                print("Removal of token failed with error:", error.localizedDescription)
+                return
+            }
+            completionBlock()
+        }
+    }
+    
     class func makeComment(withText body:String, to post:Post, completionBlock:@escaping () -> ()){
         let newCommentRef = Database.database().reference().child("comments").child(post.postId).childByAutoId()
         guard let uid = Auth.auth().currentUser?.uid else{ return }
