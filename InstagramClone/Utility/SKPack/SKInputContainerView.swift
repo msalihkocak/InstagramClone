@@ -33,14 +33,10 @@ class SKInputContainerView: UIView, UITextViewDelegate {
         return tv
     }()
     
+    var commentTextViewHeightAnchor:NSLayoutConstraint?
+    
     override var intrinsicContentSize: CGSize{
-        if self.frame.height >= 150{
-//            commentTextView.isScrollEnabled = true
-            return CGSize(width: self.frame.width, height: 150)
-        }else{
-//            commentTextView.isScrollEnabled = false
-            return .zero
-        }
+        return .zero
     }
     
     override init(frame: CGRect) {
@@ -54,7 +50,9 @@ class SKInputContainerView: UIView, UITextViewDelegate {
         
         addSubview(commentTextView)
         commentTextView.anchor(top: topAnchor, left: leftAnchor, bottom: safeAreaLayoutGuide.bottomAnchor, right: sendButton.leftAnchor, paddingTop: 8, paddingLeft: 12, paddingBottom: 8, paddingRight: 2, width: 0, height: 0)
-//        commentTextView.heightAnchor.constraint(lessThanOrEqualToConstant: 150).isActive = true
+        
+        commentTextViewHeightAnchor = commentTextView.heightAnchor.constraint(equalToConstant: 100)
+        commentTextViewHeightAnchor?.isActive = true
         
         setupSeperator()
         textViewDidChange(commentTextView)
@@ -78,14 +76,28 @@ class SKInputContainerView: UIView, UITextViewDelegate {
         }
     }
     
-    fileprivate func textViewDidChange(_ textView: UITextView) {
+    func textViewDidChange(_ textView: UITextView) {
         Utility.validate(commentTextView) { (isValid) in
             self.sendButton.isEnabled = isValid
+        }
+        
+        //width: view.frame.width * 0.15 + 8 + 12
+        let submitButtonWidth = frame.width * 0.15
+        let commentTextViewWidth = frame.width - submitButtonWidth - 20
+        let size = CGSize(width: commentTextViewWidth, height: .infinity)
+        let estimatedSize = textView.sizeThatFits(size)
+        if estimatedSize.height >= 100{
+            commentTextViewHeightAnchor?.constant = 100
+            commentTextView.isScrollEnabled = true
+        }else{
+            commentTextViewHeightAnchor?.constant = estimatedSize.height
+            commentTextView.isScrollEnabled = false
         }
     }
     
     fileprivate func resetUI(){
         commentTextView.text = ""
+        textViewDidChange(commentTextView)
         commentTextView.resignFirstResponder()
         commentTextView.layoutIfNeeded()
         commentTextView.showPlaceholderLabel()

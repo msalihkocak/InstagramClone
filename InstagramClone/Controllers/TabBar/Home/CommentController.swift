@@ -88,7 +88,8 @@ class CommentController: UITableViewController, SKInputContainerViewDelegate {
     
     func didTapSubmit(with text: String) {
         guard let post = self.post else{ return }
-        Service.makeComment(withText: text, to: post, completionBlock: {
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        Service.makeComment(withText: trimmed, to: post, completionBlock: {
             self.fetchComments()
         })
     }
