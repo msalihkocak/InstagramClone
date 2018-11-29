@@ -18,7 +18,7 @@ class UserProfileCell: UICollectionViewCell {
     }
     
     lazy var photoImageView: SKImageView = {
-        let iv = SKImageView()
+        let iv = SKImageView(withDoubleTapEnabled: false)
         iv.contentMode = .scaleAspectFill
         iv.clipsToBounds = true
         return iv

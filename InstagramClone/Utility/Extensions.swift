@@ -100,3 +100,20 @@ extension UITabBarController {
         })
     }
 }
+
+extension UIView{
+    func popUpAndPopDown(){
+        self.alpha = 0.75
+        layer.transform = CATransform3DMakeScale(0, 0, 0)
+        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.5, options: .curveEaseOut, animations: {
+            self.layer.transform = CATransform3DMakeScale(1, 1, 1)
+        }, completion: { (completed) in
+            UIView.animate(withDuration: 0.5, delay: 0.2, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.5, options: .curveEaseOut, animations: {
+                self.layer.transform = CATransform3DMakeScale(0.1, 0.1, 0.1)
+                self.alpha = 0
+            }, completion: { (completed) in
+                self.removeFromSuperview()
+            })
+        })
+    }
+}

@@ -8,10 +8,38 @@
 
 import UIKit
 
+protocol SKImageViewDelegate {
+    func didImageDoubleTap()
+}
+
 var imageCache = [String:UIImage]()
 
 class SKImageView:UIImageView{
+    
     var lastURLUsedToLoadImage: String?
+    var delegate:SKImageViewDelegate?
+    
+    let heartImageView: UIImageView = {
+        let iv = UIImageView()
+        iv.image = #imageLiteral(resourceName: "animated_heart").withRenderingMode(.alwaysOriginal)
+        iv.alpha = 0.75
+        return iv
+    }()
+    
+    init(withDoubleTapEnabled isDoubleTapEnabled:Bool) {
+        super.init(frame: .zero)
+        isUserInteractionEnabled = true
+        
+        if isDoubleTapEnabled{
+            let doubleTap = UITapGestureRecognizer(target: self, action: #selector(handleDoubleTap(_:)))
+            doubleTap.numberOfTapsRequired = 2
+            addGestureRecognizer(doubleTap)
+        }
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     func loadImage(with urlString:String){
         lastURLUsedToLoadImage = urlString
@@ -42,5 +70,20 @@ class SKImageView:UIImageView{
                 self.image = image
             }
         }).resume()
+    }
+    
+    @objc fileprivate func handleDoubleTap(_ gesture:UITapGestureRecognizer){
+        animateHeart()
+        delegate?.didImageDoubleTap()
+    }
+    
+    func animateHeart(){
+        addSubview(heartImageView)
+        
+        heartImageView.anchor(top: nil, left: nil, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 150, height: 150)
+        heartImageView.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
+        heartImageView.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+        
+        heartImageView.popUpAndPopDown()
     }
 }

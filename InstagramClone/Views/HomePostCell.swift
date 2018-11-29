@@ -10,10 +10,10 @@ import UIKit
 
 protocol HomePostCellDelegate {
     func didTapComment(of post:Post)
-    func didLikePost(at cell: HomePostCell)
+    func didLikePost(at cell: HomePostCell, forceLike:Bool)
 }
 
-class HomePostCell: UICollectionViewCell {
+class HomePostCell: UICollectionViewCell, SKImageViewDelegate {
     
     var delegate:HomePostCellDelegate?
     
@@ -28,7 +28,7 @@ class HomePostCell: UICollectionViewCell {
         }
     }
     
-    func setAttributedText(with post:Post){
+    fileprivate func setAttributedText(with post:Post){
         let attributedText = NSMutableAttributedString(string: "\(post.user.username) ", attributes: TextAttributes.titleAttributes)
         attributedText.append(NSAttributedString(string: post.captionText, attributes: TextAttributes.captionAttributes))
         attributedText.append(NSAttributedString(string: "\n\n", attributes: TextAttributes.gapAttributes))
@@ -38,22 +38,22 @@ class HomePostCell: UICollectionViewCell {
         usernameAndCaptionLabel.attributedText = attributedText
     }
     
-    let profileImageView: SKImageView = {
-        let iv = SKImageView()
+    fileprivate let profileImageView: SKImageView = {
+        let iv = SKImageView(withDoubleTapEnabled: false)
         iv.contentMode = .scaleAspectFill
         iv.layer.cornerRadius = 20
         iv.clipsToBounds = true
         return iv
     }()
     
-    let usernameLabel:UILabel = {
+    fileprivate let usernameLabel:UILabel = {
         let label = UILabel()
         label.font = UIFont.boldSystemFont(ofSize: 14)
         label.text = "Username"
         return label
     }()
     
-    let threeDotButton: UIButton = {
+    fileprivate let threeDotButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("•••", for: .normal)
         button.titleLabel?.numberOfLines = 0
@@ -61,40 +61,41 @@ class HomePostCell: UICollectionViewCell {
         return button
     }()
     
-    let photoImageView: SKImageView = {
-        let iv = SKImageView()
+    fileprivate lazy var photoImageView: SKImageView = {
+        let iv = SKImageView(withDoubleTapEnabled: true)
         iv.contentMode = .scaleAspectFill
         iv.clipsToBounds = true
+        iv.delegate = self
         return iv
     }()
     
-    lazy var favButton: UIButton = {
+    fileprivate lazy var favButton: UIButton = {
         let button = UIButton(type: .system)
         button.setImage(#imageLiteral(resourceName: "like_unselected").withRenderingMode(.alwaysOriginal), for: .normal)
         button.addTarget(self, action: #selector(handleLike), for: .touchUpInside)
         return button
     }()
     
-    lazy var commentButton: UIButton = {
+    fileprivate lazy var commentButton: UIButton = {
         let button = UIButton(type: .system)
         button.setImage(#imageLiteral(resourceName: "comment").withRenderingMode(.alwaysOriginal), for: .normal)
         button.addTarget(self, action: #selector(handleComment), for: .touchUpInside)
         return button
     }()
     
-    let sendButton: UIButton = {
+    fileprivate let sendButton: UIButton = {
         let button = UIButton(type: .system)
         button.setImage(#imageLiteral(resourceName: "send2").withRenderingMode(.alwaysOriginal), for: .normal)
         return button
     }()
     
-    let bookmarkButton: UIButton = {
+    fileprivate let bookmarkButton: UIButton = {
         let button = UIButton(type: .system)
         button.setImage(#imageLiteral(resourceName: "ribbon").withRenderingMode(.alwaysOriginal), for: .normal)
         return button
     }()
     
-    let usernameAndCaptionLabel: UILabel = {
+    fileprivate let usernameAndCaptionLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 0
         return label
@@ -133,13 +134,20 @@ class HomePostCell: UICollectionViewCell {
         usernameAndCaptionLabel.anchor(top: threeButtonStackView.bottomAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, paddingTop: 0, paddingLeft: 12, paddingBottom: 0, paddingRight: 12, width: 0, height: 0)
     }
     
-    @objc func handleComment(){
+    @objc fileprivate func handleComment(){
         guard let post = post else{ return }
         delegate?.didTapComment(of: post)
     }
     
-    @objc func handleLike(){
-        delegate?.didLikePost(at: self)
+    @objc fileprivate func handleLike(){
+        delegate?.didLikePost(at: self, forceLike: false)
+        if post?.hasLiked == false{
+            photoImageView.animateHeart()
+        }
+    }
+    
+    func didImageDoubleTap() {
+        delegate?.didLikePost(at: self, forceLike: true)
     }
     
     required init?(coder aDecoder: NSCoder) {

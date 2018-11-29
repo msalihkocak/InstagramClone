@@ -62,14 +62,22 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
                         self.isClearedDataSourceOnce = true
                         self.posts.removeAll(keepingCapacity: false)
                     }
+                    guard let post = post else{
+                        self.finishUpdateUI()
+                        return
+                    }
                     self.posts.append(post)
                     self.posts.sort(by: {$0.timestamp > $1.timestamp})
-                    DispatchQueue.main.async {
-                        self.collectionView.reloadData()
-                        self.collectionView.refreshControl?.endRefreshing()
-                    }
+                    self.finishUpdateUI()
                 }
             })
+        }
+    }
+    
+    func finishUpdateUI(){
+        DispatchQueue.main.async {
+            self.collectionView.reloadData()
+            self.collectionView.refreshControl?.endRefreshing()
         }
     }
     
@@ -86,12 +94,12 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         navigationController?.pushViewController(commentController, animated: true)
     }
     
-    func didLikePost(at cell: HomePostCell) {
+    func didLikePost(at cell: HomePostCell, forceLike:Bool) {
         // Perform like on post and wait for the result to animate like button
         guard let indexPath = collectionView.indexPath(for: cell) else{ return }
         let postToBeLiked = posts[indexPath.row]
-        Service.like(postToBeLiked) {
-            self.posts[indexPath.row].hasLiked = !postToBeLiked.hasLiked
+        Service.like(postToBeLiked, forceLike: forceLike) {
+            self.posts[indexPath.row].hasLiked = forceLike ? true : !postToBeLiked.hasLiked
             self.collectionView.reloadItems(at: [indexPath])
         }
     }

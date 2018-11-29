@@ -60,6 +60,7 @@ class SharePhotoController: UIViewController, UITextViewDelegate {
         navigationItem.rightBarButtonItem?.isEnabled = false
         let filename = UUID().uuidString + ".jpg"
         let fileReference = Storage.storage().reference().child("shared-images").child(uid).child(filename)
+        captionTextView.resignFirstResponder()
         hud.startAnimating()
         fileReference.putData(imageData, metadata: nil) { (metadata, error) in
             if let err = error{

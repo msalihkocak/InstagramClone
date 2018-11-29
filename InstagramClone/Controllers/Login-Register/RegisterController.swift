@@ -107,6 +107,7 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
         guard let email = emailTextField.text, email.count > 0 else { return }
         guard let password = passwordTextField.text, password.count > 0 else { return }
         guard let username = usernameTextField.text, username.count > 0 else { return }
+        dismissKeyboard()
         hud.startAnimating()
         Auth.auth().createUser(withEmail: email, password: password) { (result, error) in
             if let err = error{

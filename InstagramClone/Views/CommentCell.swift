@@ -19,7 +19,7 @@ class CommentCell: UITableViewCell {
     }
     
     let profileImageView:SKImageView = {
-        let iv = SKImageView()
+        let iv = SKImageView(withDoubleTapEnabled: false)
         iv.contentMode = .scaleAspectFill
         iv.layer.cornerRadius = 16
         iv.clipsToBounds = true

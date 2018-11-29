@@ -19,7 +19,7 @@ class UserSearchCell: UICollectionViewCell {
     }
     
     let profileImageView:SKImageView = {
-        let iv = SKImageView()
+        let iv = SKImageView(withDoubleTapEnabled: false)
         iv.contentMode = .scaleAspectFill
         iv.layer.cornerRadius = 25
         iv.clipsToBounds = true

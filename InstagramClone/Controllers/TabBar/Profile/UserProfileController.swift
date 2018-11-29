@@ -134,6 +134,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
                 values["user"] = user
                 let post = Post(with: values)
                 self.posts.append(post)
+                self.user?.postsCount = self.posts.count
             })
             DispatchQueue.main.async {
                 self.collectionView.reloadData()
@@ -232,12 +233,12 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         navigationController?.pushViewController(commentController, animated: true)
     }
     
-    func didLikePost(at cell: HomePostCell) {
+    func didLikePost(at cell: HomePostCell, forceLike: Bool) {
         // Perform like on post and wait for the result to animate like button
         guard let indexPath = collectionView.indexPath(for: cell) else{ return }
         let postToBeLiked = posts[indexPath.row]
-        Service.like(postToBeLiked) {
-            self.posts[indexPath.row].hasLiked = !postToBeLiked.hasLiked
+        Service.like(postToBeLiked, forceLike: forceLike) {
+            self.posts[indexPath.row].hasLiked = forceLike ? true : !postToBeLiked.hasLiked
             self.collectionView.reloadItems(at: [indexPath])
         }
     }

@@ -49,7 +49,7 @@ class MainTabBarContorller: UITabBarController, UITabBarControllerDelegate {
         let plusNavController = templateNavController(selectedImage: #imageLiteral(resourceName: "plus_unselected") , unselectedImage: #imageLiteral(resourceName: "plus_unselected"))
         
         let favController = FavoritesController(collectionViewLayout:UICollectionViewFlowLayout())
-        let favsNavController = templateNavController(selectedImage: #imageLiteral(resourceName: "like_selected"), unselectedImage: #imageLiteral(resourceName: "like_unselected"), rootViewController: favController)
+        let favsNavController = templateNavController(selectedImage: #imageLiteral(resourceName: "tab_like"), unselectedImage: #imageLiteral(resourceName: "like_unselected"), rootViewController: favController)
         
         let userController = UserProfileController(collectionViewLayout:UICollectionViewFlowLayout())
         let userNavController = templateNavController(selectedImage: #imageLiteral(resourceName: "profile_selected"), unselectedImage: #imageLiteral(resourceName: "profile_unselected"), rootViewController: userController)

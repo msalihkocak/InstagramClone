@@ -111,6 +111,7 @@ class LoginController: UIViewController {
     @objc func handleLogin(){
         guard let email = emailTextField.text, email.count > 0 else { return }
         guard let password = passwordTextField.text, password.count > 0 else { return }
+        dismissKeyboard()
         hud.startAnimating()
         Auth.auth().signIn(withEmail: email, password: password) { (result, error) in
             if let err = error{

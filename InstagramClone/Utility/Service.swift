@@ -56,13 +56,19 @@ class Service: NSObject {
         }
     }
     
-    class func fetchPostsValue(ofUserWith id:String, completion: @escaping (Post) -> ()){
+    class func fetchPostsValue(ofUserWith id:String, completion: @escaping (Post?) -> ()){
         Service.fetchUser(with: id) { (user) in
             let reference = Database.database().reference().child("posts").child(user.uid)
             reference.queryOrdered(byChild: "creationDate").observeSingleEvent(of: .value) { (snapshot) in
-                guard let valuesDict = snapshot.value as? [String:Any] else { return }
+                guard let valuesDict = snapshot.value as? [String:Any] else {
+                    completion(nil)
+                    return
+                }
                 for (key, postValues) in valuesDict{
-                    guard var values = postValues as? [String:Any] else{ return }
+                    guard var values = postValues as? [String:Any] else{
+                        completion(nil)
+                        return
+                    }
                     values["postId"] = key
                     values["user"] = user
                     Service.fetchIfUserLiked(thePostWith: key, completionBlock: { (hasLiked) in
@@ -201,10 +207,10 @@ class Service: NSObject {
         }
     }
     
-    class func like(_ post:Post, completionBlock:@escaping () -> ()){
+    class func like(_ post:Post, forceLike:Bool, completionBlock:@escaping () -> ()){
         guard let loggedInUser = Auth.auth().currentUser else{ return }
         let likePostRef = Database.database().reference().child("likes").child(post.postId)
-        let hasLiked = post.hasLiked == false ? 1 : 0
+        let hasLiked = forceLike ? 1 : post.hasLiked == false ? 1 : 0
         let values = [loggedInUser.uid:hasLiked]
         likePostRef.updateChildValues(values) { (error, ref) in
             if let error = error{
